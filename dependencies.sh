@@ -12,6 +12,7 @@ cd "$TARGET_DIR"
 
 echo "--- 1/6 System update and upgrade ---"
 sudo apt-get update --yes
+sudo apt install --only-upgrade rpi-connect
 # sudo apt-get full-upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
 
 echo "--- 2/6 Essential dependencies ---"
