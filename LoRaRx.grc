@@ -1,0 +1,153 @@
+options:
+  parameters:
+    author: "Sebasti\xE1n Silva"
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: no_gui
+    hier_block_src_path: '.:'
+    id: LoRaRx
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: RTL-SDR LoRa Receiver
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: bw
+  id: variable
+  parameters:
+    comment: ''
+    value: '250000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [288, 12.0]
+    rotation: 0
+    state: enabled
+- name: center_freq
+  id: variable
+  parameters:
+    comment: ''
+    value: '915000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [384, 12.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '1000000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [184, 12]
+    rotation: 0
+    state: enabled
+- name: sf
+  id: variable
+  parameters:
+    comment: ''
+    value: '7'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [488, 12.0]
+    rotation: 0
+    state: enabled
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import numpy as np
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [184, 84.0]
+    rotation: 0
+    state: enabled
+- name: lora_rx_0
+  id: lora_rx
+  parameters:
+    affinity: ''
+    alias: ''
+    bw: bw
+    comment: ''
+    cr: '1'
+    has_crc: 'True'
+    impl_head: 'False'
+    ldro: '2'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    pay_len: '64'
+    print_rx: '[False,True]'
+    samp_rate: samp_rate
+    sf: sf
+    soft_decoding: 'True'
+    sync_word: '[0x12]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [608, 84.0]
+    rotation: 0
+    state: enabled
+- name: soapy_rtlsdr_source_0
+  id: soapy_rtlsdr_source
+  parameters:
+    affinity: ''
+    agc: 'False'
+    alias: ''
+    bias: 'False'
+    bufflen: '16384'
+    center_freq: center_freq
+    comment: ''
+    dev_args: ''
+    freq_correction: '0'
+    gain: '20'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: samp_rate
+    type: fc32
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [376, 148.0]
+    rotation: 0
+    state: enabled
+
+connections:
+- [soapy_rtlsdr_source_0, '0', lora_rx_0, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.12.0
