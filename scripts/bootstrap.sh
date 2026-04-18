@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -euo pipefail
+
+MODE="${1:---all}"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+usage() {
+    echo "Usage: $0 [--all|--host-only|--docker-only|--help]"
+}
+
+ensure_docker() {
+    if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+        echo "[docker] Docker and Docker Compose plugin already installed."
+        return
+    fi
+
+    echo "[docker] Installing Docker and Docker Compose plugin..."
+    sudo apt-get update -y
+    sudo apt-get install -y docker.io docker-compose-plugin
+}
+
+run_host() {
+    echo "[host] Running Raspberry Pi host dependency installation..."
+    cd "$PROJECT_ROOT"
+    bash ./dependencies.sh --no-reboot
+    echo "[host] Host setup complete. A reboot is recommended before Docker setup."
+}
+
+run_docker() {
+    echo "[docker] Preparing Docker environment..."
+    ensure_docker
+
+    # Add current user to docker group; no-op if already present.
+    sudo usermod -aG docker "$USER" || true
+
+    echo "[docker] Building and starting infrastructure..."
+    cd "$PROJECT_ROOT"
+    make up
+    make ps
+
+    echo "[docker] Infrastructure is up."
+    echo "[docker] If permission issues persist, re-login and rerun: $0 --docker-only"
+}
+
+case "$MODE" in
+    --all)
+        run_host
+        echo ""
+        echo "Reboot now, then run:"
+        echo "  ./scripts/bootstrap.sh --docker-only"
+        ;;
+    --host-only)
+        run_host
+        ;;
+    --docker-only)
+        run_docker
+        ;;
+    --help|-h)
+        usage
+        ;;
+    *)
+        echo "Unknown argument: $MODE"
+        usage
+        exit 1
+        ;;
+esac

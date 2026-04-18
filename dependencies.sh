@@ -3,18 +3,37 @@
 # Abortar si hay errores
 set -e
 
+REBOOT_AFTER_INSTALL=1
+
+for arg in "$@"; do
+    case "$arg" in
+        --no-reboot)
+            REBOOT_AFTER_INSTALL=0
+            ;;
+        --help|-h)
+            echo "Uso: $0 [--no-reboot]"
+            exit 0
+            ;;
+        *)
+            echo "Argumento no reconocido: $arg"
+            echo "Uso: $0 [--no-reboot]"
+            exit 1
+            ;;
+    esac
+done
+
 export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 
-TARGET_DIR="/home/scorpio"
+TARGET_DIR="${HOME}"
 mkdir -p "$TARGET_DIR"
 cd "$TARGET_DIR"
 
 echo "--- 1/6 System update and upgrade ---"
 sudo apt-get update --yes
-sudo apt install rpi-usb-gadget -y
-sudo apt install --only-upgrade rpi-connect rpi-usb-gadget
-sudo rpi-usb-gadget on
+# sudo apt install rpi-usb-gadget -y
+# sudo apt install --only-upgrade rpi-connect rpi-usb-gadget
+# sudo rpi-usb-gadget on
 
 # sudo apt-get full-upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
 
@@ -41,11 +60,13 @@ volk_profile
 
 echo "--- 6/6 GR-LoRa-SDR installation ---"
 if [ -d "gr-lora_sdr" ]; then 
-    rm -rf gr-lora_sdr
+    cd gr-lora_sdr
+    git pull --ff-only
+else
+    git clone https://github.com/tapparelj/gr-lora_sdr.git
+    cd gr-lora_sdr
 fi
 
-git clone https://github.com/tapparelj/gr-lora_sdr.git
-cd gr-lora_sdr
 mkdir -p build && cd build
 cmake ..
 make -j$(nproc)
@@ -54,6 +75,11 @@ sudo ldconfig
 
 echo "--- Installation complete! ---"
 sync
-echo "Rebooting in 5 seconds..."
-sleep 5
-sudo reboot
+if [ "$REBOOT_AFTER_INSTALL" -eq 1 ]; then
+    echo "Rebooting in 5 seconds..."
+    sleep 5
+    sudo reboot
+else
+    echo "No reboot requested (--no-reboot)."
+    echo "Recommended: reboot manually before running Docker services."
+fi

@@ -1,0 +1,33 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: mqtt-broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ../docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqtt_data:/mosquitto/data
+      - mqtt_log:/mosquitto/log
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/base/Dockerfile.base
+    container_name: infra-checker
+    restart: unless-stopped
+    depends_on:
+      - mqtt
+    environment:
+      MQTT_HOST: mqtt
+      MQTT_PORT: 1883
+      MQTT_TOPIC: infra/heartbeat
+      SQLITE_DB_PATH: /data/infra_check.db
+      HEARTBEAT_INTERVAL_SEC: 10
+    volumes:
+      - sqlite_data:/data
+
+volumes:
+  mqtt_data:
+  mqtt_log:
+  sqlite_data:
