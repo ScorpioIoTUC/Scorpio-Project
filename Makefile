@@ -3,7 +3,7 @@ COMPOSE := docker compose -f $(COMPOSE_FILE)
 COMPOSE_SUDO := sudo docker compose -f $(COMPOSE_FILE)
 SHELL := /bin/bash
 
-.PHONY:  up down down-v build ps logs app-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all
+.PHONY: up down down-v down-all build ps logs app-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all
 
 define RUN_COMPOSE
 	@set +e; \
@@ -19,10 +19,26 @@ define RUN_COMPOSE
 	fi
 endef
 
+define RUN_COMPOSE_DIRECT
+	@set +e; \
+	check_out="$$(docker info 2>&1)"; check_status=$$?; set -e; \
+	if [ $$check_status -eq 0 ]; then \
+		$(COMPOSE) $(1); \
+	elif printf '%s\n' "$$check_out" | grep -qi 'permission denied'; then \
+		echo 'Docker permission denied; retrying with sudo...'; \
+		$(COMPOSE_SUDO) $(1); \
+	else \
+		printf '%s\n' "$$check_out"; \
+		exit $$check_status; \
+	fi
+endef
+
 help:
 	@printf '%s\n' "Available targets:" \
 	  "  make up            Build and start the stack" \
-	  "  make down-v        Stop the stack and remove volumes" \
+	  "  make down          Stop services (keep volumes/data)" \
+	  "  make down-v        Stop services and remove volumes/data" \
+	  "  make down-all      Alias of down-v" \
 	  "  make build         Build images only" \
 	  "  make ps            Show container status" \
 	  "  make logs          Follow app logs" \
@@ -37,7 +53,12 @@ up:
 	$(call RUN_COMPOSE,up -d --build)
 
 down:
+	$(call RUN_COMPOSE,down)
+
+down-v:
 	$(call RUN_COMPOSE,down -v)
+
+down-all: down-v
 
 build:
 	$(call RUN_COMPOSE,build)
@@ -46,10 +67,10 @@ ps:
 	$(call RUN_COMPOSE,ps)
 
 logs:
-	$(call RUN_COMPOSE,logs -f app)
+	$(call RUN_COMPOSE_DIRECT,logs -f app)
 
 app-shell:
-	$(call RUN_COMPOSE,exec app sh)
+	$(call RUN_COMPOSE_DIRECT,exec app sh)
 
 sqlite-schema:
 	$(call RUN_COMPOSE,exec app python -c "import sqlite3; c=sqlite3.connect('/data/infra_check.db'); print(c.execute(\"SELECT sql FROM sqlite_master WHERE type='table' AND name='heartbeats'\").fetchone()[0])")
@@ -59,7 +80,7 @@ sqlite-last:
 
 setup-host:
 	@echo "[setup-host] Installing host dependencies (system will reboot when complete)..."
-	bash ./dependencies.sh
+	bash ./dependencies.sh --no-reboot
 
 setup-docker:
 	bash ./scripts/bootstrap.sh --docker-only

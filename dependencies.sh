@@ -29,7 +29,7 @@ TARGET_DIR="${HOME}"
 mkdir -p "$TARGET_DIR"
 cd "$TARGET_DIR"
 
-echo "--- 1/6 System update and upgrade ---"
+echo "--- 1/7 System update and upgrade ---"
 sudo apt-get update --yes
 # sudo apt install rpi-usb-gadget -y
 # sudo apt install --only-upgrade rpi-connect rpi-usb-gadget
@@ -37,28 +37,28 @@ sudo apt-get update --yes
 
 # sudo apt-get full-upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
 
-echo "--- 2/6 Essential dependencies ---"
+echo "--- 2/7 Essential dependencies ---"
 sudo apt-get install -y --no-install-recommends \
     build-essential cmake git pkg-config swig \
     python3-dev python3-pip python3-setuptools \
     python3-numpy python3-matplotlib python3-scipy
 
-echo "--- 3/6 GNU Radio installation ---"
+echo "--- 3/7 GNU Radio installation ---"
 sudo apt-get install -y --install-recommends \
     gnuradio gnuradio-dev gr-osmosdr liborc-dev \
     libosmosdr-dev rtl-sdr libboost-all-dev
 
-echo "--- 4/6 Hardware configuration ---"
+echo "--- 4/7 Hardware configuration ---"
 sudo usermod -aG plugdev $USER
 sudo usermod -aG dialout $USER
 
 sudo bash -c 'echo "blacklist dvb_usb_rtl28xxu" > /etc/modprobe.d/blacklist-rtl.conf'
 sudo wget -q https://raw.githubusercontent.com/osmocom/rtl-sdr/master/rtl-sdr.rules -O /etc/udev/rules.d/20-rtlsdr.rules
 
-echo "--- 5/6 Volk optimization ---"
+echo "--- 5/7 Volk optimization ---"
 volk_profile
 
-echo "--- 6/6 GR-LoRa-SDR installation ---"
+echo "--- 6/7 GR-LoRa-SDR installation ---"
 if [ -d "gr-lora_sdr" ]; then 
     cd gr-lora_sdr
     git pull --ff-only
@@ -72,6 +72,9 @@ cmake ..
 make -j$(nproc)
 sudo make install
 sudo ldconfig
+
+
+echo "--- 7/7 Tailscale installation ---"
 
 echo "--- Installation complete! ---"
 sync
