@@ -41,7 +41,7 @@ help:
 	  "  make down-all      Alias of down-v" \
 	  "  make build         Build images only" \
 	  "  make ps            Show container status" \
-	  "  make logs          Follow app logs" \
+	  "  make logs          Follow data-ingest logs" \
 	  "  make app-shell     Open a shell in the app container" \
 	  "  make sqlite-schema Print the SQLite schema for heartbeats" \
 	  "  make sqlite-last    Print the last 5 heartbeats" \
@@ -67,7 +67,7 @@ ps:
 	$(call RUN_COMPOSE,ps)
 
 logs:
-	$(call RUN_COMPOSE_DIRECT,logs -f app)
+	$(call RUN_COMPOSE_DIRECT,logs -f data_ingest)
 
 app-shell:
 	$(call RUN_COMPOSE_DIRECT,exec app sh)

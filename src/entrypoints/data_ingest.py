@@ -14,9 +14,9 @@ async def main():
     # Initialize the decoder with custom config (optional)
     # Initialize MQTT client
     mqtt_client = MQTT(client_id=MQTT_CLIENT_ID)
-    await mqtt_client.start(host=MQTT_HOST, port=MQTT_PORT)
-
     try:
+        await mqtt_client.start(host=MQTT_HOST, port=MQTT_PORT)
+
         while True:
             # Simulate receiving raw data (replace with actual data source)
 
@@ -38,3 +38,7 @@ async def main():
         print(f"Error in data ingest: {e}")
     finally:
         await mqtt_client.end_connection()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
