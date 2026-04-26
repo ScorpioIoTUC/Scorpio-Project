@@ -2,8 +2,10 @@ COMPOSE_FILE := deploy/docker-compose.yml
 COMPOSE := docker compose -f $(COMPOSE_FILE)
 COMPOSE_SUDO := sudo docker compose -f $(COMPOSE_FILE)
 SHELL := /bin/bash
+VENV_DIR := .venv
+VENV_PY := $(VENV_DIR)/bin/python
 
-.PHONY: up down down-v down-all build ps logs app-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all
+.PHONY: up down down-v down-all build ps logs app-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all setup-dev lint
 
 define RUN_COMPOSE
 	@set +e; \
@@ -45,6 +47,8 @@ help:
 	  "  make app-shell     Open a shell in the app container" \
 	  "  make sqlite-schema Print the SQLite schema for heartbeats" \
 	  "  make sqlite-last    Print the last 5 heartbeats" \
+	  "  make setup-dev     Create a local virtualenv and install Python tools" \
+	  "  make lint           Run Ruff lint checks" \
 	  "  make setup-host    Install host dependencies and reboot" \
 	  "  make setup-docker  Install/check Docker and start infrastructure services" \
 	  "  make setup-all     Run host setup, reboot, then continue with Docker after login"
@@ -89,3 +93,16 @@ setup-all:
 	@$(MAKE) setup-host
 	@echo ""
 	@echo "After login, run: make setup-docker"
+
+setup-dev:
+	python3 -m venv $(VENV_DIR)
+	$(VENV_PY) -m pip install --upgrade pip
+	$(VENV_PY) -m pip install -r requirements.txt
+
+lint:
+	@if [ ! -x "$(VENV_PY)" ]; then \
+		echo "Create the dev environment first: make setup-dev"; \
+		exit 1; \
+	fi
+	$(VENV_PY) -m ruff check . --fix
+	

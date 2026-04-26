@@ -58,6 +58,15 @@ Expected app log line every 10 seconds:
 [ok] heartbeat published and stored at <timestamp>
 ```
 
+### Local linting
+
+Ruff is installed into a local virtual environment so it does not depend on system Python packages:
+
+```bash
+make setup-dev
+make lint
+```
+
 ### Verify SQLite data is persisted
 
 ```bash
