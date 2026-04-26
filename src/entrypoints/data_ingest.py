@@ -1,4 +1,4 @@
-from src.infra.mqtt import MQTT
+from src.infra import MQTT, Logging
 import asyncio
 import os
 from configs.entrypoints import data_ingest as config
@@ -14,6 +14,8 @@ async def main():
     # Initialize the decoder with custom config (optional)
     # Initialize MQTT client
     mqtt_client = MQTT(client_id=MQTT_CLIENT_ID)
+    logger = Logging(logger_name="data_ingest")
+    logger.info("Starting data ingest service...")
     try:
         await mqtt_client.start(host=MQTT_HOST, port=MQTT_PORT)
 
@@ -26,7 +28,7 @@ async def main():
             )
 
             # Publish the preprocessed data to an MQTT topic
-            print(f"Publishing to MQTT topic '{MQTT_TOPIC}': {mock_msg}")
+            logger.info(f"Publishing to MQTT topic '{MQTT_TOPIC}': {mock_msg}")
             await mqtt_client.publish(
                 topic=MQTT_TOPIC,
                 payload=mock_msg,
@@ -35,7 +37,7 @@ async def main():
 
             await asyncio.sleep(5)  # Simulate delay between data processing
     except Exception as e:
-        print(f"Error in data ingest: {e}")
+        logger.error(f"Error in data ingest: {e}")
     finally:
         await mqtt_client.end_connection()
 
