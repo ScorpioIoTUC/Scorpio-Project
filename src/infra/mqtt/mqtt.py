@@ -5,7 +5,7 @@ from src.libs.mqtt_client import (
     MQTTPublishArgs,
     MQTTSubscribeArgs,
 )
-from typing import Literal
+from typing import Callable, Literal
 
 CLIENT_NAME = "paho_client"
 
@@ -92,3 +92,11 @@ class MQTT:
 
     async def end_connection(self) -> None:
         return await self.client.end_connection()
+
+    def set_message_callback(self, callback: Callable[[str, str], None]) -> None:
+        """Register a callback function to handle incoming MQTT messages.
+        
+        Args:
+            callback: Function that accepts (topic: str, payload: str) parameters
+        """
+        return self.client.set_message_callback(callback)
