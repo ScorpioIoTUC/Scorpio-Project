@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any
+from typing import Any, Callable, Optional
 
 import paho.mqtt.client as mqtt
 
@@ -20,6 +20,7 @@ class PahoClient(MQTTClientContract):
             protocol=args.protocol,  # type: ignore
             transport=args.transport,  # type: ignore
         )
+        self._message_callback: Optional[Callable[[str, str], None]] = None
 
     @property
     def client(self) -> mqtt.Client:
@@ -76,3 +77,22 @@ class PahoClient(MQTTClientContract):
     async def end_connection(self) -> None:
         await self.loop_stop()
         await self.close()
+
+    def set_message_callback(self, callback: Callable[[str, str], None]) -> None:
+        """Register a callback function to handle incoming MQTT messages.
+        
+        Args:
+            callback: Function that accepts (topic: str, payload: str) parameters
+        """
+        self._message_callback = callback
+        
+        def on_message_wrapper(client, userdata, msg):
+            """Internal wrapper for paho's message callback."""
+            try:
+                payload = msg.payload.decode('utf-8') if isinstance(msg.payload, bytes) else msg.payload
+                if self._message_callback:
+                    self._message_callback(msg.topic, payload)
+            except Exception as e:
+                print(f"Error in MQTT message callback: {e}")
+        
+        self._client.on_message = on_message_wrapper
