@@ -21,28 +21,22 @@ services:
     environment:
       MQTT_HOST: mqtt
       MQTT_PORT: 1883
-      MQTT_TOPIC: scorpio/ingest/sat/raw
+      MQTT_PUB_TOPIC: scorpio/extract/sat
       MQTT_CLIENT_ID: scorpio_data_ingest
       MQTT_QOS: 0
   
-  # app:
-  #   build:
-  #     context: ..
-  #     dockerfile: docker/base/Dockerfile.base
-  #   container_name: infra-checker
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - mqtt
-  #   environment:
-  #     MQTT_HOST: mqtt
-  #     MQTT_PORT: 1883
-  #     MQTT_TOPIC: infra/heartbeat
-  #     SQLITE_DB_PATH: /data/infra_check.db
-  #     HEARTBEAT_INTERVAL_SEC: 10
-  #   volumes:
-  #     - sqlite_data:/data
+  data_storage:
+    build:
+      context: ..
+      dockerfile: docker/data_storage/Dockerfile
+    container_name: data-storage
+    restart: unless-stopped
+    depends_on:
+      - mqtt
+    volumes:
+      - sqlite_data:/data
 
 volumes:
   mqtt_data:
   mqtt_log:
-  # sqlite_data:
+  sqlite_data:

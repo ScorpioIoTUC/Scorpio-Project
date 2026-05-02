@@ -1,14 +1,14 @@
 mqtt:
   namespace: scorpio
 
-  ingest:
-    sat: "{namespace}/ingest/sat/raw"
+  extract:
+    sat: "{namespace}/extract/sat"
 
-  process:
-    sat: "{namespace}/process/sat/clean"
+  preprocess:
+    sat: "{namespace}/preprocess/sat"
 
-  store:
-    sat: "{namespace}/store/sat/record"
+  send:
+    sat: "{namespace}/send/sat"
 
-  gateway:
-    sat: "{namespace}/gateway/sat/uploaded"
+  uploaded:
+    sat: "{namespace}/uploaded/sat"

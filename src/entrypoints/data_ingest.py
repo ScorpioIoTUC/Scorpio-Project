@@ -6,7 +6,7 @@ from configs.entrypoints import data_ingest as config
 MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", config.CLIENT_ID)
 MQTT_HOST = os.getenv("MQTT_HOST", config.MQTT_BROKER)
 MQTT_PORT = int(os.getenv("MQTT_PORT", config.MQTT_PORT))
-MQTT_TOPIC = os.getenv("MQTT_TOPIC", config.TOPIC)
+MQTT_PUB_TOPIC = os.getenv("MQTT_PUB_TOPIC", config.MQTT_PUB_TOPIC)
 MQTT_QOS = int(os.getenv("MQTT_QOS", config.QOS))
 
 
@@ -28,9 +28,9 @@ async def main():
             )
 
             # Publish the preprocessed data to an MQTT topic
-            logger.info(f"Publishing to MQTT topic '{MQTT_TOPIC}': {mock_msg}")
+            logger.info(f"Publishing to MQTT PUB topic '{MQTT_PUB_TOPIC}': {mock_msg}")
             await mqtt_client.publish(
-                topic=MQTT_TOPIC,
+                topic=MQTT_PUB_TOPIC,
                 payload=mock_msg,
                 qos=MQTT_QOS,
             )
