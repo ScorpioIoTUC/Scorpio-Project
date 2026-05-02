@@ -73,12 +73,13 @@ class Database:
         """
         await self.client.execute(DBExecuteArgs(query))
 
-    async def delete_many(self, ids: list[int]):
+    async def delete_uploaded(self, uploaded: bool = True):
+        uploaded_val = 1 if uploaded else 0
         query = f"""
         DELETE FROM local_backup 
-        WHERE id IN ({", ".join(str(id) for id in ids)})
+        WHERE uploaded = {uploaded_val}
         """
         await self.client.execute(DBExecuteArgs(query))
-        
+
     async def end_connection(self):
         await self.client.close()

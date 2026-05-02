@@ -18,12 +18,6 @@ services:
     restart: unless-stopped
     depends_on:
       - mqtt
-    environment:
-      MQTT_HOST: mqtt
-      MQTT_PORT: 1883
-      MQTT_PUB_TOPIC: scorpio/extract/sat
-      MQTT_CLIENT_ID: scorpio_data_ingest
-      MQTT_QOS: 0
   
   data_storage:
     build:
@@ -35,6 +29,15 @@ services:
       - mqtt
     volumes:
       - sqlite_data:/data
+
+  data_clean:
+    build:
+      context: ..
+      dockerfile: docker/data_clean/Dockerfile
+    container_name: data-clean
+    restart: unless-stopped
+    depends_on:
+      - data_storage
 
 volumes:
   mqtt_data:

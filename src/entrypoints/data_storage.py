@@ -18,7 +18,7 @@ async def publisher(
     while True:
         try:
             await asyncio.sleep(interval)
-            result = await api.publish_pending(config.TOPIC_SEND)
+            await api.publish_pending(config.TOPIC_SEND)
             # Result already logged by controller
         except asyncio.CancelledError:
             break
