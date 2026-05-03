@@ -30,6 +30,10 @@ class Database:
     def _current_datetime(self) -> str:
         return datetime_to_string(now(), format_string="%Y-%m-%d %H:%M:%S")
 
+    def _sql_quote(self, value: str) -> str:
+        # Escape single quotes for SQL and wrap in single quotes
+        return "'" + str(value).replace("'", "''") + "'"
+
     async def create(self):
         await self.client.initialize(DBInitializeArgs(sql_schemas=SCHEMAS))
 
@@ -37,14 +41,16 @@ class Database:
         current_datetime = self._current_datetime()
         query = f"""
         INSERT INTO local_backup (payload, topic, uploaded, creation_datetime, update_datetime) 
-        VALUES ({payload}, {topic}, 0, {current_datetime}, {current_datetime})
+        VALUES ({self._sql_quote(payload)}, {self._sql_quote(topic)}, 0, {self._sql_quote(current_datetime)}, {self._sql_quote(current_datetime)})
         """
         await self.client.execute(DBExecuteArgs(query))
 
     async def insert_many(self, entries: list[tuple[str, str]]):
         current_datetime = self._current_datetime()
         values_str = ", ".join(
-            f"({payload}, {topic}, 0, {current_datetime}, {current_datetime})"
+            (
+                f"({self._sql_quote(payload)}, {self._sql_quote(topic)}, 0, {self._sql_quote(current_datetime)}, {self._sql_quote(current_datetime)})"
+            )
             for topic, payload in entries
         )
         query = f"""
@@ -68,7 +74,7 @@ class Database:
         uploaded_val = 1 if uploaded else 0
         query = f"""
         UPDATE local_backup 
-        SET uploaded = {uploaded_val}, update_datetime = {current_datetime} 
+        SET uploaded = {uploaded_val}, update_datetime = {self._sql_quote(current_datetime)} 
         WHERE id IN ({ids_str})
         """
         await self.client.execute(DBExecuteArgs(query))

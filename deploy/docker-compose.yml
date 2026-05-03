@@ -38,6 +38,8 @@ services:
     restart: unless-stopped
     depends_on:
       - data_storage
+    volumes:
+      - sqlite_data:/data
 
 volumes:
   mqtt_data:

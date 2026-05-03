@@ -60,6 +60,6 @@ class PublishPendingUseCase:
 
         return {
             "success": True,
-            "message": f"Published {published_count} pending messages",
+            "message": f"Published {published_count} pending messages to {target_topic}",
             "data": {"published_count": published_count},
         }

@@ -19,7 +19,7 @@ class DataCleanAPI:
             self.logger.info(result["message"])
         else:
             self.logger.error(
-                f"{result['error_code']}: {result.get('error_message')} - {result.get('details', '')}"
+                f"{result['error_code']}: {result.get('message')} - {result.get('details', '')}"
             )
         return result
 

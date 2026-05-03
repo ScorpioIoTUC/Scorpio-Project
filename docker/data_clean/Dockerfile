@@ -6,9 +6,9 @@ ENV PYTHONPATH=/entrypoints
 
 WORKDIR /entrypoints
 
-RUN pip install --no-cache-dir paho-mqtt
-
 COPY src /entrypoints/src
 COPY configs /entrypoints/configs
+COPY requirements.txt /entrypoints/requirements.txt
+RUN pip install --no-cache-dir -r /entrypoints/requirements.txt
 
 CMD ["python", "-m", "src.entrypoints.data_clean"]

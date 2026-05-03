@@ -108,3 +108,8 @@ make sqlite-schema
 ```bash
 make sqlite-last
 ```
+
+# Logs
+```bash
+docker compose -f deploy/docker-compose.yml logs -f
+```

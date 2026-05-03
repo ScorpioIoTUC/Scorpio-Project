@@ -35,7 +35,7 @@ class DataStorageAPI:
             self.logger.info(result["message"])
         else:
             self.logger.error(
-                f"{result['error_code']}: {result.get('error_message')} - {result.get('details', '')}"
+                f"{result['error_code']}: {result.get('message')} - {result.get('details', '')}"
             )
         return result
 
@@ -82,12 +82,6 @@ class DataStorageAPI:
         Call this periodically (e.g., every 30 seconds).
         """
         result = await self.publish_pending_controller.handle(target_topic)
-        if result["success"]:
-            self.logger.info(result["message"])
-        else:
-            self.logger.error(
-                f"{result['error_code']}: {result.get('error_message')} - {result.get('details', '')}"
-            )
         return self._parse_response(result)
 
     async def shutdown(self) -> None:

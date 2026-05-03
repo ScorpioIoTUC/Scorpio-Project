@@ -27,7 +27,7 @@ async def main():
                 qos=config.MQTT_QOS,
             )
 
-            await asyncio.sleep(5)  # Simulate delay between data processing
+            await asyncio.sleep(15)  # Simulate delay between data processing
     except Exception as e:
         logger.error(f"Error in data ingest: {e}")
     finally:

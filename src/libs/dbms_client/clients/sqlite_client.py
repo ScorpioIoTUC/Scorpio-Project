@@ -12,7 +12,7 @@ from src.libs.dbms_client.types.dbms_client_types import (
 class SqliteClient(DbmsClientContract):
     def __init__(self, args: DBClientInitArgs) -> None:
         self._db_path = args.db_path
-        self._conn: aiosqlite.Connection
+        self._conn: aiosqlite.Connection = None
 
     async def initialize(self, args: DBInitializeArgs) -> None:
         await self.connect()

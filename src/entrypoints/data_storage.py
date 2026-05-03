@@ -1,5 +1,6 @@
 from src.app.services.data_storage import DataStorageAPI
 from configs.entrypoints import data_storage as config
+from src.infra import Logging
 import asyncio
 import os
 
@@ -50,9 +51,11 @@ async def listener(api: DataStorageAPI) -> None:
 
 
 async def main() -> None:
-    api = DataStorageAPI()
-    api.logger.info("Starting data storage service...")
+    logger = Logging(logger_name="data_storage")
+    api = None
     try:
+        api = DataStorageAPI()
+        logger.info("Starting data storage service...")
         await api.configure()
         api.logger.info("Service configured successfully")
         # Create tasks
@@ -62,9 +65,10 @@ async def main() -> None:
         # Wait for either task to fail (they should run forever..)
         await asyncio.gather(listener_task, publish_task)
     except Exception as e:
-        api.logger.error(f"Error in data storage service: {e}")
+        logger.error(f"Error in data storage service: {e}")
     finally:
-        await api.shutdown()
+        if api is not None:
+            await api.shutdown()
 
 
 if __name__ == "__main__":

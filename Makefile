@@ -5,7 +5,7 @@ SHELL := /bin/bash
 VENV_DIR := .venv
 VENV_PY := $(VENV_DIR)/bin/python
 
-.PHONY: up down down-v down-all build ps logs app-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all setup-dev lint
+.PHONY: up down down-v down-all build ps logs app-shell sqlite-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all setup-dev lint
 
 define RUN_COMPOSE
 	@set +e; \
@@ -43,8 +43,8 @@ help:
 	  "  make down-all      Alias of down-v" \
 	  "  make build         Build images only" \
 	  "  make ps            Show container status" \
-	  "  make logs          Follow data-ingest logs" \
-	  "  make app-shell     Open a shell in the app container" \
+	  "  make app-shell     Open a shell in the data_storage container" \
+	  "  make sqlite-shell  Open an interactive SQLite shell" \
 	  "  make sqlite-schema Print the SQLite schema for heartbeats" \
 	  "  make sqlite-last    Print the last 5 heartbeats" \
 	  "  make setup-dev     Create a local virtualenv and install Python tools" \
@@ -71,16 +71,19 @@ ps:
 	$(call RUN_COMPOSE,ps)
 
 logs:
-	$(call RUN_COMPOSE_DIRECT,logs -f data_ingest)
+	docker compose -f deploy/docker-compose.yml logs -f
 
 app-shell:
-	$(call RUN_COMPOSE_DIRECT,exec app sh)
+	$(call RUN_COMPOSE_DIRECT,exec data_storage sh)
+
+sqlite-shell:
+	$(call RUN_COMPOSE_DIRECT,exec data_storage python -m sqlite3 /data/sat_data.db)
 
 sqlite-schema:
-	$(call RUN_COMPOSE,exec app python -c "import sqlite3; c=sqlite3.connect('/data/infra_check.db'); print(c.execute(\"SELECT sql FROM sqlite_master WHERE type='table' AND name='heartbeats'\").fetchone()[0])")
+	$(call RUN_COMPOSE,exec data_storage python -c "import sqlite3; c=sqlite3.connect('/data/sat_data.db'); print(c.execute(\"SELECT sql FROM sqlite_master WHERE type='table' AND name='local_backup'\").fetchone()[0])")
 
 sqlite-last:
-	$(call RUN_COMPOSE,exec app python -c "import sqlite3; c=sqlite3.connect('/data/infra_check.db'); rows=c.execute(\"SELECT id, ts_utc, topic, payload FROM heartbeats ORDER BY id DESC LIMIT 5\").fetchall(); [print(row) for row in rows]")
+	$(call RUN_COMPOSE,exec data_storage python -c "import sqlite3; c=sqlite3.connect('/data/sat_data.db'); rows=c.execute(\"SELECT * FROM local_backup ORDER BY id DESC LIMIT 5\").fetchall(); [print(row) for row in rows]")
 
 setup-host:
 	@echo "[setup-host] Installing host dependencies (system will reboot when complete)..."
