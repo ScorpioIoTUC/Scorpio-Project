@@ -5,7 +5,7 @@ from src.app.services.data_clean.api import DataCleanAPI
 
 
 async def main():
-    logger = Logging(logger_name="data_clean")
+    logger = Logging(logger_name="entrypoint")
     api = None
     try:
         api = DataCleanAPI()

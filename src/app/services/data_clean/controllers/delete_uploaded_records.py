@@ -10,7 +10,7 @@ class DeleteUploadedRecordsController:
         self.use_case = DeleteUploadedRecordsUseCase(db)
 
     async def handle(self) -> dict:
-        self.logger.debug("Deleting uploaded records from the database")
+        self.logger.info("Deleting uploaded records from the database")
         try:
             result = await self.use_case.execute()
             return result

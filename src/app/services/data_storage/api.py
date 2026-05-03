@@ -15,7 +15,7 @@ class DataStorageAPI:
     def __init__(self) -> None:
         # Infrastructure
         self.mqtt_client = MQTT(config.MQTT_CLIENT_ID)
-        self.logger = Logging(logger_name="data_storage.api")
+        self.logger = Logging(logger_name="api")
         self.db = Database(db_path=config.SQLITE_DB_PATH)
         self.mqtt_host = config.MQTT_HOST
         self.mqtt_port = config.MQTT_PORT

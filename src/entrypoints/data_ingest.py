@@ -6,7 +6,7 @@ async def main():
     # Initialize the decoder with custom config (optional)
     # Initialize MQTT client
     mqtt_client = MQTT(client_id=config.MQTT_CLIENT_ID)
-    logger = Logging(logger_name="data_ingest")
+    logger = Logging(logger_name="entrypoint")
     logger.info("Starting data ingest service...")
     try:
         await mqtt_client.start(host=config.MQTT_HOST, port=config.MQTT_PORT)

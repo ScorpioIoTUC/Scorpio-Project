@@ -5,7 +5,7 @@ SHELL := /bin/bash
 VENV_DIR := .venv
 VENV_PY := $(VENV_DIR)/bin/python
 
-.PHONY: up down down-v down-all build ps logs app-shell sqlite-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all setup-dev lint
+.PHONY: start down down-v down-all build ps logs app-shell sqlite-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all setup-dev lint save-logs
 
 define RUN_COMPOSE
 	@set +e; \
@@ -37,7 +37,7 @@ endef
 
 help:
 	@printf '%s\n' "Available targets:" \
-	  "  make up            Build and start the stack" \
+	  "  make start         Build and start the stack" \
 	  "  make down          Stop services (keep volumes/data)" \
 	  "  make down-v        Stop services and remove volumes/data" \
 	  "  make down-all      Alias of down-v" \
@@ -46,14 +46,16 @@ help:
 	  "  make app-shell     Open a shell in the data_storage container" \
 	  "  make sqlite-shell  Open an interactive SQLite shell" \
 	  "  make sqlite-schema Print the SQLite schema for heartbeats" \
-	  "  make sqlite-last    Print the last 5 heartbeats" \
+	  "  make sqlite-last   Print the last 5 heartbeats" \
 	  "  make setup-dev     Create a local virtualenv and install Python tools" \
-	  "  make lint           Run Ruff lint checks" \
+	  "  make lint          Run Ruff lint checks" \
+	  "  make logs          Preview the logs from all the containers in real-time" \
+	  "  make save-logs     Save the logs in a external file" \
 	  "  make setup-host    Install host dependencies and reboot" \
 	  "  make setup-docker  Install/check Docker and start infrastructure services" \
 	  "  make setup-all     Run host setup, reboot, then continue with Docker after login"
 
-up:
+start:
 	$(call RUN_COMPOSE,up -d --build)
 
 down:
@@ -72,6 +74,9 @@ ps:
 
 logs:
 	docker compose -f deploy/docker-compose.yml logs -f
+
+save-logs:
+	bash scripts/save_logs.sh
 
 app-shell:
 	$(call RUN_COMPOSE_DIRECT,exec data_storage sh)

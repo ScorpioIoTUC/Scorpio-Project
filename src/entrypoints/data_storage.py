@@ -51,7 +51,7 @@ async def listener(api: DataStorageAPI) -> None:
 
 
 async def main() -> None:
-    logger = Logging(logger_name="data_storage")
+    logger = Logging(logger_name="entrypoint")
     api = None
     try:
         api = DataStorageAPI()
