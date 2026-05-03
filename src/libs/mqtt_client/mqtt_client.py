@@ -1,3 +1,4 @@
+from typing import Callable
 from .client.paho_client import PahoClient
 from .mqtt_client_contract import MQTTClientContract
 from .types.mqtt_client_types import (
@@ -49,3 +50,6 @@ class MQTTClient(MQTTClientContract):
 
     async def end_connection(self) -> None:
         return await self.client_obj.end_connection()
+
+    def set_message_callback(self, callback: Callable[[str, str], None]) -> None:
+        return self.client_obj.set_message_callback(callback)

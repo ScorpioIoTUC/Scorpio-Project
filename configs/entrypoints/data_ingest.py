@@ -1,6 +1,7 @@
-CLIENT_ID = "scorpio_data_ingest"
-MQTT_BROKER = "localhost"
+MQTT_CLIENT_ID = "scorpio_data_ingest"
+MQTT_HOST = "mqtt"
 MQTT_PORT = 1883
-TOPIC = "scorpio/ingest/sat/raw"
-QOS = 0
+# MQTT_PUB_TOPIC = "scorpio/extract/sat"
+MQTT_PUB_TOPIC = "scorpio/preprocess/sat"
+MQTT_QOS = 0
 RETAIN = False

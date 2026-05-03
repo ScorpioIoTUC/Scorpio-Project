@@ -10,16 +10,10 @@
 # GNU Radio version: 3.10.12.0
 
 from gnuradio import gr
-from gnuradio.filter import firdes
-from gnuradio.fft import window
 import sys
 import signal
-from argparse import ArgumentParser
-from gnuradio.eng_arg import eng_float, intx
-from gnuradio import eng_notation
 from gnuradio import soapy
 import gnuradio.lora_sdr as lora_sdr
-import numpy as np
 import threading
 
 

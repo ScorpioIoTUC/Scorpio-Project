@@ -1,110 +1,91 @@
 # Scorpio-Project
 
-## Recommended installation flow (Raspberry Pi + Docker)
+Docker-based stack for the Scorpio pipeline:
 
-Use this command to start the full installation flow:
+- `mqtt`: Mosquitto broker
+- `data_ingest`: publishes mock MQTT traffic
+- `data_storage`: stores and republishes pending data
+- `data_clean`: removes uploaded records
+
+## Quick Start
 
 ```bash
 make setup-all
 ```
 
-What it does:
-
-1. Installs host dependencies (GNU Radio, SDR rules, system libs).
-2. Reboots the Raspberry Pi automatically.
-
-After reboot and login, continue with:
+After reboot:
 
 ```bash
 make setup-docker
 ```
 
-## Docker starter infrastructure
-
-This project now includes a minimal Docker deployment to validate infrastructure:
-
-- `mqtt`: Mosquitto broker (`eclipse-mosquitto:2`)
-- `app`: Python checker service that publishes MQTT heartbeats and stores them in SQLite
-- Named volumes for persistence (`mqtt_data`, `mqtt_log`, `sqlite_data`)
-
-### Files added/updated
-
-- `deploy/docker-compose.yml`
-- `Makefile`
-- `docker/base/Dockerfile.base`
-- `docker/mosquitto/mosquitto.conf`
-- `requirements.txt`
-- `src/app/infra_check.py`
-- `.dockerignore`
-
-### Start the stack
+Start the stack locally:
 
 ```bash
-make up
+make start
 ```
 
-The Makefile retries with `sudo` automatically if Docker socket permissions are denied.
+`make start` falls back to `sudo` if Docker permissions are missing.
 
-### Check containers and logs
+## Useful Commands
+
+Stop the stack keeping the volumes:
 
 ```bash
-make ps
+make down
+```
+If you need to stop and remove all containers, volumes, and networks:
+
+```bash
+make down-all
+```
+
+For more commands, execute the command `make help` to see the full list of available commands and their descriptions.
+
+## Logs
+
+Preview the logs of all services in real-time
+
+```bash
 make logs
 ```
 
-Expected app log line every 10 seconds:
+Save them to a file (ordered by timestamp):
 
-```text
-[ok] heartbeat published and stored at <timestamp>
+```bash
+make save-logs
 ```
 
-### Local linting
+The result file will contain all logs from the services, and saved in the logs/ directory as *<timestamp>_all_containers.log*. 
 
-Ruff is installed into a local virtual environment so it does not depend on system Python packages:
+Read Mosquitto’s file log:
+
+```bash
+docker compose -f deploy/docker-compose.yml exec mqtt sh -c 'tail -f /mosquitto/log/mosquitto.log'
+```
+
+## Data
+
+Persistence uses Docker volumes: `mqtt_data`, `mqtt_log`, and `sqlite_data`.
+
+### SQlite CLI
+To access the SQLite database local_backup.db, you can use the following command:
+
+```bash
+make sqlite-shell
+```
+
+## Development
 
 ```bash
 make setup-dev
 make lint
 ```
 
-### Verify SQLite data is persisted
-
-```bash
-make sqlite-schema
-```
-
-### Stop the stack
-
-```bash
-make down
-```
-
-To also remove persisted volumes:
-
-```bash
-make down-v
-```
-
-## Docker permission fix (Linux)
-
-If you get `permission denied while trying to connect to the docker API at unix:///var/run/docker.sock`, add your user to the `docker` group one time:
+If Docker access fails on Linux, add your user once:
 
 ```bash
 sudo usermod -aG docker $USER
 ```
 
-Then log out and log back in. `newgrp docker` only fixes the current terminal session; a full re-login is what makes new terminals work.
-
-If you do not want to restart your session right now, `make up` will fall back to `sudo` automatically.
-
-### Inspect the SQLite schema
-
-```bash
-make sqlite-schema
-```
-
-### Inspect the latest rows
-
-```bash
-make sqlite-last
-```
+Then log out and back in.
