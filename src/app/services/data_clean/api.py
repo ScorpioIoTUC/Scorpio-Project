@@ -6,11 +6,11 @@ from src.app.services.data_clean.controllers import DeleteUploadedRecordsControl
 class DataCleanAPI:
     def __init__(self):
         # Infrastructure
-        self.logger = Logging(logger_name="data_clean")
+        self.logger = Logging(logger_name="data_clean.api")
         self.db = Database(db_path=config.SQLITE_DB_PATH)
         # Controllers
         self.delete_uploaded_records_controller = DeleteUploadedRecordsController(
-            self.db, self.logger
+            self.db
         )
 
     def _parse_response(self, result: dict) -> dict:

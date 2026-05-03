@@ -5,9 +5,9 @@ from src.infra import Logging, Database
 from src.domain.exceptions.app_error import AppError
 
 class DeleteUploadedRecordsController:
-    def __init__(self, db: Database, logger: Logging):
-        self.logger = logger
-        self.use_case = DeleteUploadedRecordsUseCase(db, logger)
+    def __init__(self, db: Database):
+        self.logger = Logging(logger_name="delete_uploaded_records")
+        self.use_case = DeleteUploadedRecordsUseCase(db)
 
     async def handle(self) -> dict:
         self.logger.debug("Deleting uploaded records from the database")

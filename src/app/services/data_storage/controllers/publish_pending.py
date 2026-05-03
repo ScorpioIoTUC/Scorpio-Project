@@ -8,8 +8,8 @@ from src.infra import Logging, Database, MQTT
 class PublishPendingController:
     """Handle periodic publishing of pending messages."""
 
-    def __init__(self, db: Database, logger: Logging, mqtt_client: MQTT):
-        self.logger = logger
+    def __init__(self, db: Database, mqtt_client: MQTT):
+        self.logger = Logging(logger_name="publish_pending")
         self.use_case = PublishPendingUseCase(db, mqtt_client)
 
     async def handle(self, target_topic: str) -> dict:

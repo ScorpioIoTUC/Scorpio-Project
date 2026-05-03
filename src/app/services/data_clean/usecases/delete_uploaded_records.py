@@ -1,17 +1,16 @@
 from src.domain.exceptions.app_error import AppError
-from src.infra import Database, Logging
+from src.infra import Database
 
 
 class DeleteUploadedRecordsUseCase:
-    def __init__(self, db: Database, logger: Logging):
+    def __init__(self, db: Database):
         self.db = db
-        self.logger = logger
 
     async def execute(self) -> dict:
         try:
             await self.db.delete_uploaded(uploaded=True)
             non_uploaded_records = await self.db.find_all(uploaded=False)
-            non_uploaded_count = len(non_uploaded_records)
+            non_uploaded_count = len(non_uploaded_records) # type: ignore
             return {
                 "success": True,
                 "message": f"Uploaded records deleted successfully. Remaining non-uploaded records: {non_uploaded_count}",

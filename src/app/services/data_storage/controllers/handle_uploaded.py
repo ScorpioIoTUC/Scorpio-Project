@@ -8,8 +8,8 @@ from src.domain.exceptions.app_error import AppError
 class HandleUploadedController:
     """Handle uploaded confirmation messages: validate input and execute use case."""
 
-    def __init__(self, db: Database, logger: Logging):
-        self.logger = logger
+    def __init__(self, db: Database):
+        self.logger = Logging(logger_name="handle_uploaded")
         self.use_case = HandleUploadedUseCase(db)
 
     async def handle(self, topic: str, payload: str) -> dict:

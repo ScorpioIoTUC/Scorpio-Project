@@ -15,19 +15,19 @@ class DataStorageAPI:
     def __init__(self) -> None:
         # Infrastructure
         self.mqtt_client = MQTT(config.MQTT_CLIENT_ID)
-        self.logger = Logging(logger_name="data_storage")
+        self.logger = Logging(logger_name="data_storage.api")
         self.db = Database(db_path=config.SQLITE_DB_PATH)
         self.mqtt_host = config.MQTT_HOST
         self.mqtt_port = config.MQTT_PORT
 
         # Controllers
         self.store_preprocess_controller = StorePreprocessController(
-            self.db, self.logger
+            self.db
         )
         self.publish_pending_controller = PublishPendingController(
-            self.db, self.logger, self.mqtt_client
+            self.db, self.mqtt_client
         )
-        self.handle_uploaded_controller = HandleUploadedController(self.db, self.logger)
+        self.handle_uploaded_controller = HandleUploadedController(self.db)
 
     def _parse_response(self, result: dict) -> dict:
         """Helper to log results in a consistent format."""
