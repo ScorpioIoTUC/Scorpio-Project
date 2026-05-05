@@ -36,6 +36,9 @@ class AppError(Exception):
     def too_many_publish_errors(cls, details=""):
         return cls(ErrorCode.PUB02, details=details)
     
+    @classmethod
+    def cloud_send_error(cls, details=""):
+        return cls(ErrorCode.CS01, details=details)    
     
     @classmethod
     def unknown_error(cls, details=""):
