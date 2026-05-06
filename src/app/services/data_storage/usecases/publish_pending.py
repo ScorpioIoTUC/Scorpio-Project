@@ -3,7 +3,7 @@
 import json
 from src.infra import MQTT, Database
 from src.domain.exceptions.app_error import AppError
-
+from configs.entrypoints import data_storage as config
 
 class PublishPendingUseCase:
     """Periodically read pending messages from local backup and publish them."""
@@ -50,7 +50,7 @@ class PublishPendingUseCase:
                 await self.mqtt_client.publish(
                     topic=target_topic,
                     payload=json.dumps(message),
-                    qos=1,
+                    qos=config.TOPIC_SEND_QOS,
                 )
                 published_count += 1
             except Exception as e:

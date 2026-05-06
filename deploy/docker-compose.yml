@@ -18,7 +18,7 @@ services:
     restart: unless-stopped
     depends_on:
       - mqtt
-  
+
   data_storage:
     build:
       context: ..
@@ -41,6 +41,16 @@ services:
     volumes:
       - sqlite_data:/data
 
+  data_export:
+    build:
+      context: ..
+      dockerfile: docker/data_export/Dockerfile
+    container_name: data-export
+    restart: unless-stopped
+    depends_on:
+      - data_storage
+    volumes:
+      - sqlite_data:/data
 volumes:
   mqtt_data:
   mqtt_log:

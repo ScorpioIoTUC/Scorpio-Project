@@ -11,4 +11,4 @@ COPY configs /entrypoints/configs
 COPY requirements.txt /entrypoints/requirements.txt
 RUN pip install --no-cache-dir -r /entrypoints/requirements.txt
 
-CMD ["python", "-m", "src.entrypoints.data_ingest"]
+CMD ["python", "-m", "src.entrypoints.data_export"]

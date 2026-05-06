@@ -13,7 +13,7 @@ class HandleUploadedController:
         self.use_case = HandleUploadedUseCase(db)
 
     async def handle(self, topic: str, payload: str) -> dict:
-        self.logger.info(f"Handling uploaded confirmation from {topic}")
+        self.logger.info(f"Handling uploaded confirmation from '{topic}'")
         try:
             result = await self.use_case.execute(payload)
             return result

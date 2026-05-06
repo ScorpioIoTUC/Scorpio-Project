@@ -13,7 +13,7 @@ class PublishPendingController:
         self.use_case = PublishPendingUseCase(db, mqtt_client)
 
     async def handle(self, target_topic: str) -> dict:
-        self.logger.info(f"Publishing pending messages to {target_topic}")
+        self.logger.info(f"Publishing pending messages to '{target_topic}'")
         try:
             result = await self.use_case.execute(target_topic)
             return result

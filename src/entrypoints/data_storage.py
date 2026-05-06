@@ -2,20 +2,12 @@ from src.app.services.data_storage import DataStorageAPI
 from configs.entrypoints import data_storage as config
 from src.infra import Logging
 import asyncio
-import os
-
-MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID", config.MQTT_CLIENT_ID)
-MQTT_HOST = os.getenv("MQTT_HOST", config.MQTT_HOST)
-MQTT_PORT = int(os.getenv("MQTT_PORT", config.MQTT_PORT))
-DB_PATH = os.getenv("DB_PATH", "data/local_backup.db")
-PUBLISH_INTERVAL = int(os.getenv("PUBLISH_INTERVAL", config.PUBLISH_INTERVAL))
 
 
 async def publisher(
     api: DataStorageAPI, interval: int = config.PUBLISH_INTERVAL
 ) -> None:
-    """Periodically publish pending messages to MQTT broker.
-    """
+    """Periodically publish pending messages to MQTT broker."""
     while True:
         try:
             await asyncio.sleep(interval)
@@ -28,8 +20,7 @@ async def publisher(
 
 
 async def listener(api: DataStorageAPI) -> None:
-    """Listen for MQTT messages and route to appropriate handler.
-    """
+    """Listen for MQTT messages and route to appropriate handler."""
     loop = asyncio.get_running_loop()
 
     def handle_message(topic: str, payload: str) -> None:
@@ -61,7 +52,9 @@ async def main() -> None:
         # Create tasks
         listener_task = asyncio.create_task(listener(api))
         publish_task = asyncio.create_task(publisher(api))
-        api.logger.info(f"Periodic publish interval set to {PUBLISH_INTERVAL} seconds")
+        api.logger.info(
+            f"Periodic publish interval set to {config.PUBLISH_INTERVAL} seconds"
+        )
         # Wait for either task to fail (they should run forever..)
         await asyncio.gather(listener_task, publish_task)
     except Exception as e:

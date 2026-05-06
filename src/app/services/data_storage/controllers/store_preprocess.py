@@ -15,12 +15,12 @@ class StorePreprocessController:
         self.use_case = StorePreprocessUseCase(db)
 
     async def handle(self, topic: str, payload: str) -> dict:
-        self.logger.info(f"Handling preprocess message from {topic}")
+        self.logger.info(f"Handling preprocessed message from '{topic}'")
         try:
             await self.use_case.execute(topic, payload)
             return {
                 "success": True,
-                "message": "Preprocess message stored successfully",
+                "message": "Preprocessed message stored successfully",
             }
         except AppError as e:
             return {"success": False, **e.to_dict()}
