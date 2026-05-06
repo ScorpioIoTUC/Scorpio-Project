@@ -13,7 +13,7 @@ class DeleteUploadedRecordsUseCase:
             non_uploaded_count = len(non_uploaded_records) # type: ignore
             return {
                 "success": True,
-                "message": f"Uploaded records deleted successfully. Remaining non-uploaded records: {non_uploaded_count}",
+                "message": f"Remaining non-uploaded records: {non_uploaded_count}",
             }
         except RuntimeError:
             raise AppError.db_operation_failed(

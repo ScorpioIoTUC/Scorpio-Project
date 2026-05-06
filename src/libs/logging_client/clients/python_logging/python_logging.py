@@ -8,7 +8,7 @@ from src.libs.logging_client.types.logging_client_types import LoggingClientInit
 class PythonLoggingClient(LoggingClientContract):
     """Concrete logging client using Python's built-in logging module."""
 
-    _LOG_FORMAT = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+    _LOG_FORMAT = "%(asctime)-10s | %(levelname)-10s | %(name)-30s | %(message)s"
     _DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
     def __init__(self, args: LoggingClientInitArgs) -> None:

@@ -21,9 +21,9 @@ class HandleUploadedUseCase:
             await self.db.update_many(ids=ids, uploaded=True)
         except Exception:
             raise AppError.db_operation_failed(
-                "Failed to update messages as uploaded in DB"
+                "Failed to update messages as uploaded in the database."
             )
         return {
             "success": True,
-            "message": f"Marked {len(ids)} messages as uploaded in DB",
+            "message": f"Marked {len(ids)} messages as uploaded in the database.",
         }

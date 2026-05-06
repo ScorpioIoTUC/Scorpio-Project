@@ -10,6 +10,6 @@ TOPIC_UPLOADED = "scorpio/uploaded/sat"
 TOPIC_UPLOADED_QOS = 1
 # Topics to publish
 TOPIC_SEND = "scorpio/send/sat"
-TOPIC_SEND_QOS = 1
+TOPIC_SEND_QOS = 0
 # Sqlite parameters
 SQLITE_DB_PATH = "/data/sat_data.db"
