@@ -36,7 +36,7 @@ async def main():
             mock_msg = json.dumps(packet)
 
             # Publish the preprocessed data to an MQTT topic
-            logger.info(f"Publishing to MQTT PUB topic '{config.MQTT_PUB_TOPIC}': {mock_msg}")
+            logger.info(f"Publishing to MQTT PUB topic '{config.MQTT_PUB_TOPIC}'")
             await mqtt_client.publish(
                 topic=config.MQTT_PUB_TOPIC,
                 payload=mock_msg,

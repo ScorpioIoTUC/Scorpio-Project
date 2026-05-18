@@ -17,8 +17,8 @@ class SendPendingUseCase:
             local_id = json_payload["local_id"]
             if local_id in self.buffer:  # Avoid duplicates in the buffer
                 return {
-                    "success": True,
-                    "message": f"Duplicate local_id '{local_id}' ignored. Current buffer size: {len(self.buffer)}",
+                    "success": False,
+                    "message": f"Duplicate local_id '{local_id}' ignored",
                 }
             # TODO: Wait until the scorpio service is ready
             # response = await self.http_client.post(headers=headers, json=json_payload)
