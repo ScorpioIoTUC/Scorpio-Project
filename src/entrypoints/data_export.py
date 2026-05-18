@@ -1,5 +1,4 @@
 from src.app.services.data_export.api import DataExportAPI
-from configs.entrypoints import data_export as config
 from src.infra import Logging
 import asyncio
 
