@@ -1,9 +1,9 @@
-from src.app.services.data_export.api import DataExportAPI
+from src.app.services.data_preprocess.api import DataPreprocessAPI
 from src.infra import Logging
 import asyncio
 
 
-async def listener(api: DataExportAPI) -> None:
+async def listener(api: DataPreprocessAPI) -> None:
     loop = asyncio.get_running_loop()
 
     def handle_message(topic: str, payload: str) -> None:
@@ -23,15 +23,15 @@ async def main() -> None:
     logger = Logging(logger_name="entrypoint")
     api = None
     try:
-        api = DataExportAPI()
-        logger.info("Starting data export service...")
+        api = DataPreprocessAPI()
+        logger.info("Starting data preprocess service...")
         await api.configure()
         api.logger.info("Service configured successfully")
         # Create tasks
         listener_task = asyncio.create_task(listener(api))
         await asyncio.gather(listener_task)
     except Exception as e:
-        logger.error(f"Error in data export service: {e}")
+        logger.error(f"Error in data preprocess service: {e}")
     finally:
         if api is not None:
             await api.shutdown()

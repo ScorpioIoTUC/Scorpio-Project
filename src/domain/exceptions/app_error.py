@@ -41,6 +41,14 @@ class AppError(Exception):
         return cls(ErrorCode.CS01, details=details)    
     
     @classmethod
+    def unidentified_satellite(cls, details=""):
+        return cls(ErrorCode.PR01, details=details)
+    
+    @classmethod
+    def deserialization_error(cls, details=""):
+        return cls(ErrorCode.PR02, details=details)
+    
+    @classmethod
     def unknown_error(cls, details=""):
         return cls(ErrorCode.UNKNOWN, details=details)
 

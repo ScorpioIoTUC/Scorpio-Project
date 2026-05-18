@@ -19,6 +19,15 @@ services:
     depends_on:
       - mqtt
 
+  data_preprocess:
+    build: 
+      context: ..
+      dockerfile: docker/data_preprocess/Dockerfile
+    container_name: data-preprocess
+    restart: unless-stopped
+    depends_on: 
+      - mqtt
+
   data_storage:
     build:
       context: ..
