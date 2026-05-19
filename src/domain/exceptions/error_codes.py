@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class ErrorCode(Enum):
+    DEC01 = ("DEC01", "LoRa decoding failed", 500)
     DB01 = ("DB01", "Database operation failed", 500)
     DB02 = ("DB02", "Database connection failed", 503)
     DB03 = ("DB03", "Database max error count exceeded", 500)

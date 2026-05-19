@@ -27,6 +27,27 @@ make start
 
 `make start` falls back to `sudo` if Docker permissions are missing.
 
+### Alternatives
+The last command does not allow you to view real-time logs from all containers while the service is being compiled. If you want to view the logs during compilation, you can run the following command in a separate terminal:
+
+```bash 
+docker compose -f deploy/docker-compose.yml up --build
+```
+
+The service for data ingest takes a lot of time to build because it needs to install GNURadio and its dependencies. If you want to speed up the development process, you can build the images separately:
+
+```bash 
+docker compose build data_storage data_clean data_preprocess data_export
+docker compose up -d
+```
+
+If you only need to rebuild the data ingest service, you can run the next command: 
+```bash
+docker compose build data_ingest
+docker compose up -d
+```
+
+
 ## Useful Commands
 
 Stop the stack keeping the volumes:

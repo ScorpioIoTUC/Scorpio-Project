@@ -71,7 +71,7 @@
 #define LORA_CRC_ON                                 true
 
 #define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 64 // Define the payload size here
+#define BUFFER_SIZE                                 256 // Define the payload size here
 
 char txpacket[BUFFER_SIZE];
 char rxpacket[BUFFER_SIZE];
@@ -114,9 +114,31 @@ void loop()
 {
 	if(lora_idle == true)
 	{
-    delay(1000);
+    delay(30000); // 30 seconds between transmissions
 		txNumber += 0.01;
-		sprintf(txpacket,"Hello world number %0.2f",txNumber);  //start a package
+
+    const char* satelliteId = "1604";
+    bool crcOk = true;
+    double latitude = 37.7749;
+    double longitude = -122.4194;
+    double altitude = 550.0;
+    double rssi = -113.75;
+    double snr = -8.5;
+    double freqError = 10515.13672;
+
+    snprintf(
+      txpacket,
+      BUFFER_SIZE,
+      "{\"starlink_id\":\"%s\",\"crc_ok\":%s,\"lat\":%.4f,\"lon\":%.4f,\"alt\":%.1f,\"rssi\":%.2f,\"snr\":%.1f,\"freq_error\":%.5f}",
+      satelliteId,
+      crcOk ? "true" : "false",
+      latitude,
+      longitude,
+      altitude,
+      rssi,
+      snr,
+      freqError
+    );
    
 		Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 

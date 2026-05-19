@@ -76,6 +76,17 @@ sudo ldconfig
 
 echo "--- 7/7 Tailscale installation ---"
 
+echo "--- 8/8 Python packages (requirements.txt) ---"
+# Install Python requirements system-wide so system services can import them
+if [ -f "${PROJECT_DIR}/requirements.txt" ]; then
+    sudo python3 -m pip install --upgrade pip
+    sudo python3 -m pip install -r "${PROJECT_DIR}/requirements.txt"
+else
+    echo "[WARN] requirements.txt not found at ${PROJECT_DIR}; installing paho-mqtt as fallback"
+    sudo python3 -m pip install --upgrade pip
+    sudo python3 -m pip install paho-mqtt
+fi
+
 echo "--- Installation complete! ---"
 sync
 if [ "$REBOOT_AFTER_INSTALL" -eq 1 ]; then

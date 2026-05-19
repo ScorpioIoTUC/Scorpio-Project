@@ -6,6 +6,7 @@ ENV PYTHONPATH=/entrypoints
 
 WORKDIR /entrypoints
 
+
 COPY src /entrypoints/src
 COPY configs /entrypoints/configs
 COPY requirements.txt /entrypoints/requirements.txt

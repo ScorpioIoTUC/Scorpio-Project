@@ -1,7 +1,7 @@
 from threading import Lock
 from typing import Optional
 
-from src.libs.decoder_client import (
+from decoder.libs.decoder_client import (
     DecoderClient,
     DecoderClientInitArgs,
     PreprocessDataArgs,

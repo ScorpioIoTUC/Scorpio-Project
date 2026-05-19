@@ -49,6 +49,10 @@ class AppError(Exception):
         return cls(ErrorCode.PR02, details=details)
     
     @classmethod
+    def lora_decoder_error(cls, details=""):
+        return cls(ErrorCode.DEC01, details=details)
+        
+    @classmethod
     def unknown_error(cls, details=""):
         return cls(ErrorCode.UNKNOWN, details=details)
 

@@ -5,7 +5,9 @@ SHELL := /bin/bash
 VENV_DIR := .venv
 VENV_PY := $(VENV_DIR)/bin/python
 
-.PHONY: start down down-v down-all build ps logs app-shell sqlite-shell sqlite-schema sqlite-last help setup-host setup-docker setup-all setup-dev lint save-logs
+.PHONY: start stop delete-all build ps logs app-shell sqlite-shell sqlite-schema help setup-host setup-docker setup-all setup-dev lint save-logs
+
+.PHONY: docker-logs decoder-logs
 
 define RUN_COMPOSE
 	@set +e; \
@@ -38,15 +40,13 @@ endef
 help:
 	@printf '%s\n' "Available targets:" \
 	  "  make start         Build and start the stack" \
-	  "  make down          Stop services (keep volumes/data)" \
-	  "  make down-v        Stop services and remove volumes/data" \
-	  "  make down-all      Alias of down-v" \
+	  "  make stop          Stop services (keep volumes/data)" \
+	  "  make delete-all    Stop services and remove volumes/data" \
 	  "  make build         Build images only" \
 	  "  make ps            Show container status" \
 	  "  make app-shell     Open a shell in the data_storage container" \
 	  "  make sqlite-shell  Open an interactive SQLite shell" \
 	  "  make sqlite-schema Print the SQLite schema for heartbeats" \
-	  "  make sqlite-last   Print the last 5 heartbeats" \
 	  "  make setup-dev     Create a local virtualenv and install Python tools" \
 	  "  make lint          Run Ruff lint checks" \
 	  "  make logs          Preview the logs from all the containers in real-time" \
@@ -56,15 +56,18 @@ help:
 	  "  make setup-all     Run host setup, reboot, then continue with Docker after login"
 
 start:
+	@echo "Starting Docker stack..."
 	$(call RUN_COMPOSE,up -d --build)
+	@echo ""
+	@echo "Installing LoRa Decoder service..."
+	bash decoder/install_decoders.sh
 
-down:
+stop:
 	$(call RUN_COMPOSE,down)
 
-down-v:
+delete-all:
 	$(call RUN_COMPOSE,down -v)
 
-down-all: down-v
 
 build:
 	$(call RUN_COMPOSE,build)
@@ -74,6 +77,12 @@ ps:
 
 logs:
 	docker compose -f deploy/docker-compose.yml logs -f
+
+docker-logs: logs
+
+decoder-logs:
+	@echo "Tailing lora-decoder service logs (may require sudo)"
+	@sudo journalctl -u lora-decoder@$(shell whoami).service -f
 
 save-logs:
 	bash scripts/save_logs.sh
@@ -86,9 +95,6 @@ sqlite-shell:
 
 sqlite-schema:
 	$(call RUN_COMPOSE,exec data_storage python -c "import sqlite3; c=sqlite3.connect('/data/sat_data.db'); print(c.execute(\"SELECT sql FROM sqlite_master WHERE type='table' AND name='local_backup'\").fetchone()[0])")
-
-sqlite-last:
-	$(call RUN_COMPOSE,exec data_storage python -c "import sqlite3; c=sqlite3.connect('/data/sat_data.db'); rows=c.execute(\"SELECT * FROM local_backup ORDER BY id DESC LIMIT 5\").fetchall(); [print(row) for row in rows]")
 
 setup-host:
 	@echo "[setup-host] Installing host dependencies (system will reboot when complete)..."
