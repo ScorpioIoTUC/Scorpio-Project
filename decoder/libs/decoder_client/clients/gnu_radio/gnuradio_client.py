@@ -2,8 +2,8 @@ from gnuradio import blocks, gr, soapy  # type: ignore[import-not-found]
 import gnuradio.lora_sdr as lora_sdr  # type: ignore[import-not-found]
 import pmt  # type: ignore[import-not-found]
 
-from src.libs.decoder_client.decoder_client_contract import DecoderClientContract
-from src.libs.decoder_client.types.decoder_client_types import DecoderClientInitArgs, PreprocessDataArgs
+from decoder.libs.decoder_client.decoder_client_contract import DecoderClientContract
+from decoder.libs.decoder_client.types.decoder_client_types import DecoderClientInitArgs, PreprocessDataArgs
 
 
 class _LoraRxTopBlock(gr.top_block):

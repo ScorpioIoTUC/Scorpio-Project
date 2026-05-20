@@ -1,7 +1,7 @@
 from threading import Lock
 from typing import Optional
 
-from src.libs.decoder_client import (
+from decoder.libs.decoder_client import (
     DecoderClient,
     DecoderClientInitArgs,
     PreprocessDataArgs,
@@ -52,8 +52,11 @@ class Decoder:
         if getattr(self, "_initialized", False):
             return
 
+        init_config = dict(config)
+        init_config.setdefault("client_name", "gnuradio_client")
+
         self._init_args = DecoderClientInitArgs(
-            **config, client_name=config.get("client_name", "gnuradio_client")
+            **init_config
         )
         self._client = DecoderClient(self._init_args)
         self._initialized = True

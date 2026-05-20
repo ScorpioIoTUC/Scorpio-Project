@@ -1,0 +1,28 @@
+[Unit]
+Description=LoRa Signal Decoder (GNU Radio)
+After=network.target docker.service
+Wants=docker.service
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/home/%i/Scorpio-Project
+ExecStart=/home/%i/Scorpio-Project/decoder/lora-decoder/venv/bin/python /home/%i/Scorpio-Project/decoder/lora-decoder/lora_decoder.py
+Environment=PATH=/home/%i/Scorpio-Project/decoder/lora-decoder/venv/bin:/usr/bin
+Environment=PYTHONPATH=/home/%i/Scorpio-Project
+Environment=PYTHONUNBUFFERED=1
+
+# Restart on failure
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=lora-decoder
+
+# Resource limits
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

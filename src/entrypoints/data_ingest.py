@@ -1,53 +1,50 @@
-from src.infra import MQTT, Logging
+from src.infra import Logging
 import asyncio
-from configs.entrypoints import data_ingest as config
-from random import choice
-import json 
+from src.app.services.data_ingest.api import DataIngestAPI
 
-async def main():
-    # Initialize the decoder with custom config (optional)
-    # Initialize MQTT client
-    mqtt_client = MQTT(client_id=config.MQTT_CLIENT_ID)
-    logger = Logging(logger_name="entrypoint")
-    logger.info("Starting data ingest service...")
+
+async def listener(api: DataIngestAPI) -> None:
+    loop = asyncio.get_running_loop()
+
+    def handle_message(topic: str, payload: str) -> None:
+        api.logger.info(f"Callback received MQTT message on topic '{topic}'")
+        future = asyncio.run_coroutine_threadsafe(
+            api.handle_message(topic, payload), loop
+        )
+
+        def log_future_result(done_future):
+            try:
+                done_future.result()
+            except Exception as exc:
+                api.logger.error(f"Error handling MQTT message: {exc}")
+
+        future.add_done_callback(log_future_result)
+
+    api.mqtt_client.set_message_callback(handle_message)
+    api.logger.info("Message listener registered")
     try:
-        await mqtt_client.start(host=config.MQTT_HOST, port=config.MQTT_PORT)
-
         while True:
-            # Simulate receiving raw data (replace with actual data source)
+            await asyncio.sleep(1)
+    except asyncio.CancelledError:
+        pass
 
-            # Preprocess the raw data using the decoder
-            packet = {
-                "timestamp": "3/22/2025 3:42:48 PM",
-                "crc_ok": choice([True, False]),  # Simulate CRC check result
-                "lat": 37.7749,
-                "lon": -122.4194,
-                "alt": 550,
-                "starlink_id": "1604",
-                "rssi": -113.75,
-                "snr": -8.5,
-                "frec_error": 10515.13672,
-            }
-            if not packet["crc_ok"]:
-                packet["lat"] = 0
-                packet["lon"] = 0
-                packet["alt"] = 0
-                packet["starlink_id"] = 0
-            mock_msg = json.dumps(packet)
 
-            # Publish the preprocessed data to an MQTT topic
-            logger.info(f"Publishing to MQTT PUB topic '{config.MQTT_PUB_TOPIC}'")
-            await mqtt_client.publish(
-                topic=config.MQTT_PUB_TOPIC,
-                payload=mock_msg,
-                qos=config.MQTT_QOS,
-            )
-
-            await asyncio.sleep(30)  # Simulate delay between data processing
+async def main() -> None:
+    logger = Logging(logger_name="entrypoint")
+    api = None
+    try:
+        api = DataIngestAPI()
+        logger.info("Starting data ingest service...")
+        await api.configure()
+        logger.info("Service configured successfully")
+        # Create tasks
+        listener_task = asyncio.create_task(listener(api))
+        await asyncio.gather(listener_task)
     except Exception as e:
-        logger.error(f"Error in data ingest: {e}")
+        logger.error(f"Error in data ingest service: {e}")
     finally:
-        await mqtt_client.end_connection()
+        if api is not None:
+            await api.shutdown()
 
 
 if __name__ == "__main__":

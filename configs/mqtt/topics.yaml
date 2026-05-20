@@ -1,6 +1,9 @@
 mqtt:
   namespace: scorpio
 
+  decoded:
+    lora: "{namespace}/decoded/lora"
+  
   extract:
     sat: "{namespace}/extract/sat"
 

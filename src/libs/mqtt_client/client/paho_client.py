@@ -15,6 +15,7 @@ from src.libs.mqtt_client.types.mqtt_client_types import (
 class PahoClient(MQTTClientContract):
     def __init__(self, args: MQTTClientInitArgs) -> None:
         self._client = mqtt.Client(
+            mqtt.CallbackAPIVersion.VERSION1,  # type: ignore
             client_id=args.client_id,
             clean_session=args.clean_session,
             protocol=args.protocol,  # type: ignore

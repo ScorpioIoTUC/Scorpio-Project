@@ -1,20 +1,17 @@
-from src.infra import MQTT, Logging, HTTP
-from configs.entrypoints import data_export as config
-from .controllers import SendPendingController
+from src.infra import MQTT, Logging
+from configs.entrypoints import data_ingest as config
+from .controllers import IngestFromLoraController
 
 
-class DataExportAPI:
+class DataIngestAPI:
     def __init__(self) -> None:
         # Infrastructure
         self.mqtt_client = MQTT(config.MQTT_CLIENT_ID)
         self.mqtt_host = config.MQTT_HOST
         self.mqtt_port = config.MQTT_PORT
         self.logger = Logging(logger_name="api")
-        self.http_client = HTTP(url=config.API_URL, credentials=config.CREDENTIALS)
-        # Controllers
-        self.send_pending_controller = SendPendingController(
-            self.mqtt_client, self.http_client
-        )
+        # controllers
+        self.ingest_from_lora_controller = IngestFromLoraController(self.mqtt_client)
 
     def _parse_response(self, result: dict) -> dict:
         if result["success"]:
@@ -32,19 +29,18 @@ class DataExportAPI:
             self.logger.info("Connected to MQTT broker")
             # Subscribe to topics
             await self.mqtt_client.subscribe(
-                topic=config.TOPIC_SEND, qos=config.TOPIC_SEND_QOS
+                topic=config.MQTT_SUB_TOPIC_1, qos=config.MQTT_SUB_TOPIC_1_QOS
             )
-            self.logger.info(f"Subscribed to {config.TOPIC_SEND}")
+            self.logger.info(f"Subscribed to {config.MQTT_SUB_TOPIC_1}")
         except Exception as e:
             self.logger.error(f"Error during MQTT configuration: {e}")
             raise
 
     async def handle_message(self, topic: str, payload: str) -> dict:
-        if topic == config.TOPIC_SEND:
-            self.logger.debug(f"Received message on topic '{config.TOPIC_SEND}'")
-            result = await self.send_pending_controller.handle(
-                uploaded_topic=config.TOPIC_UPLOADED, payload=payload
-            )
+        # Receive message from Lora Decoder
+        if topic == config.MQTT_SUB_TOPIC_1:
+            self.logger.info(f"Received message on topic '{config.MQTT_SUB_TOPIC_1}'")
+            result = await self.ingest_from_lora_controller.handle(payload)
         else:
             self.logger.warning(f"Received message on unhandled topic: {topic}")
             return {"success": False, "error": f"Unknown topic: {topic}"}
