@@ -52,19 +52,19 @@ Use the Arduino IDE with RadioLib installed:
 Stop the stack keeping the volumes:
 
 ```bash
-make down
+make stop
 ```
 If you need to stop and remove all containers, volumes, and networks:
 
 ```bash
-make down-all
+make delete-all
 ```
 
 For more commands, execute the command `make help` to see the full list of available commands and their descriptions.
 
 ## Logs
 
-Preview the logs of all services in real-time
+Preview the logs of all services in real-time (docker stack)
 
 ```bash
 make logs
