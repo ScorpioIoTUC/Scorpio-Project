@@ -41,7 +41,7 @@ class DataExportAPI:
 
     async def handle_message(self, topic: str, payload: str) -> dict:
         if topic == config.TOPIC_SEND:
-            self.logger.info(f"Received message on topic '{config.TOPIC_SEND}'")
+            self.logger.debug(f"Received message on topic '{config.TOPIC_SEND}'")
             result = await self.send_pending_controller.handle(
                 uploaded_topic=config.TOPIC_UPLOADED, payload=payload
             )

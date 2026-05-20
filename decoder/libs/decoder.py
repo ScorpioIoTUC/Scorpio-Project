@@ -52,8 +52,11 @@ class Decoder:
         if getattr(self, "_initialized", False):
             return
 
+        init_config = dict(config)
+        init_config.setdefault("client_name", "gnuradio_client")
+
         self._init_args = DecoderClientInitArgs(
-            **config, client_name=config.get("client_name", "gnuradio_client")
+            **init_config
         )
         self._client = DecoderClient(self._init_args)
         self._initialized = True

@@ -7,8 +7,18 @@ async def listener(api: DataIngestAPI) -> None:
     loop = asyncio.get_running_loop()
 
     def handle_message(topic: str, payload: str) -> None:
-        coro = api.handle_message(topic, payload)
-        asyncio.run_coroutine_threadsafe(coro, loop)
+        api.logger.info(f"Callback received MQTT message on topic '{topic}'")
+        future = asyncio.run_coroutine_threadsafe(
+            api.handle_message(topic, payload), loop
+        )
+
+        def log_future_result(done_future):
+            try:
+                done_future.result()
+            except Exception as exc:
+                api.logger.error(f"Error handling MQTT message: {exc}")
+
+        future.add_done_callback(log_future_result)
 
     api.mqtt_client.set_message_callback(handle_message)
     api.logger.info("Message listener registered")

@@ -1,50 +1,49 @@
 # Scorpio-Project
 
-Docker-based stack for the Scorpio pipeline:
+Scorpio pipeline with two runtime parts:
 
-- `mqtt`: Mosquitto broker
-- `data_ingest`: publishes mock MQTT traffic
-- `data_storage`: stores and republishes pending data
-- `data_clean`: removes uploaded records
+- Docker stack: `mqtt`, `data_ingest`, `data_preprocess`, `data_storage`, `data_clean`, `data_export`
+- Decoder service: `lora-decoder@<user>.service`, which listens to LoRa and forwards messages into `data_ingest`
 
 ## Quick Start
-
-```bash
-make setup-all
-```
-
-After reboot:
-
-```bash
-make setup-docker
-```
-
-Start the stack locally:
 
 ```bash
 make start
 ```
 
-`make start` falls back to `sudo` if Docker permissions are missing.
+The last command will build the docker stack  and the systemd service for the LoRa decoder. 
 
-### Alternatives
-The last command does not allow you to view real-time logs from all containers while the service is being compiled. If you want to view the logs during compilation, you can run the following command in a separate terminal:
+
+
+### Alternatives (Manual)
+The last command `make start` does not allow you to view real-time logs from all containers from the docker stack while the service is being compiled. If you want to view the logs during compilation, you can run the following command in a separate terminal:
 
 ```bash 
 docker compose -f deploy/docker-compose.yml up --build
 ```
 
-The service for data ingest takes a lot of time to build because it needs to install GNURadio and its dependencies. If you want to speed up the development process, you can build the images separately:
+After the docker stack is up, you can start the LoRa decoder service manually:
 
-```bash 
-docker compose build data_storage data_clean data_preprocess data_export
-docker compose up -d
+```bash
+bash decoder/install_decoders.sh
 ```
 
-If you only need to rebuild the data ingest service, you can run the next command: 
-```bash
-docker compose build data_ingest
-docker compose up -d
+
+## Decoder
+
+The LoRa decoder is the first input component of the flow. It listens to LoRa frames, decodes them, and publishes the resulting event to `data_ingest`, which then forwards it through the rest of the pipeline shown in the diagram.
+
+![MQTT topics flow](docs/imgs/mqtt_topics.png)
+
+
+
+
+The example transmitter is in [LoRaTx.ino](LoRaTx.ino). It generates a sample payload so you can test the full flow on an ESP32 board. The sketch is intended to be configurable for Heltec WiFi LoRa 32 (V3), Wireless Shell (V3), and Wireless Stick Lite (V3).
+
+Use the Arduino IDE with RadioLib installed:
+
+```cpp
+#include <RadioLib.h>
 ```
 
 

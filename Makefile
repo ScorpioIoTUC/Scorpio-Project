@@ -63,7 +63,11 @@ start:
 	bash decoder/install_decoders.sh
 
 stop:
+	@echo "Stopping Docker stack..."
 	$(call RUN_COMPOSE,down)
+	@echo ""
+	@echo "Stopping LoRa Decoder service..."
+	sudo systemctl stop lora-decoder@scorpio.service
 
 delete-all:
 	$(call RUN_COMPOSE,down -v)

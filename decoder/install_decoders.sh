@@ -22,9 +22,14 @@ fi
 
 # Create a dedicated virtualenv for the decoder (run as current user)
 DECODER_VENV="${DECODER_DIR}/venv"
+if [ -d "${DECODER_VENV}" ] && ! "${DECODER_VENV}/bin/python" -c "import gnuradio; import paho.mqtt.client" >/dev/null 2>&1; then
+    echo "[*] Existing venv cannot import gnuradio or paho-mqtt; recreating it with system site packages"
+    rm -rf "${DECODER_VENV}"
+fi
+
 if [ ! -d "${DECODER_VENV}" ]; then
     echo "[*] Creating python virtualenv at ${DECODER_VENV}"
-    python3 -m venv "${DECODER_VENV}"
+    python3 -m venv --system-site-packages "${DECODER_VENV}"
     "${DECODER_VENV}/bin/pip" install --upgrade pip
     if [ -f "${PROJECT_DIR}/requirements.txt" ]; then
         echo "[*] Installing Python requirements into decoder venv"
@@ -35,6 +40,14 @@ if [ ! -d "${DECODER_VENV}" ]; then
     fi
 else
     echo "[*] Using existing virtualenv at ${DECODER_VENV}"
+    if ! "${DECODER_VENV}/bin/python" -c "import paho.mqtt.client" >/dev/null 2>&1; then
+        echo "[*] paho-mqtt missing from decoder venv; installing requirements"
+        if [ -f "${PROJECT_DIR}/requirements.txt" ]; then
+            "${DECODER_VENV}/bin/pip" install -r "${PROJECT_DIR}/requirements.txt"
+        else
+            "${DECODER_VENV}/bin/pip" install paho-mqtt
+        fi
+    fi
 fi
 
 # Check if we have sudo

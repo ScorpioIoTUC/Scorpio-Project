@@ -9,7 +9,7 @@ class SendPendingController:
         self.use_case = SendPendingUseCase(mqtt_client, http_client)
 
     async def handle(self, uploaded_topic: str, payload: str) -> dict:
-        self.logger.info("Sending record to Scorpio Server")
+        self.logger.debug("Sending record to Scorpio Server")
         try:
             result = await self.use_case.execute(uploaded_topic, payload)
             return result
