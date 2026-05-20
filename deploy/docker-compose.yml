@@ -1,0 +1,66 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: mqtt-broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ../docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqtt_data:/mosquitto/data
+      - mqtt_log:/mosquitto/log
+
+  data_ingest:
+    build:
+      context: ..
+      dockerfile: docker/data_ingest/Dockerfile
+    container_name: data-ingest
+    restart: unless-stopped
+    depends_on:
+      - mqtt
+
+  data_preprocess:
+    build: 
+      context: ..
+      dockerfile: docker/data_preprocess/Dockerfile
+    container_name: data-preprocess
+    restart: unless-stopped
+    depends_on: 
+      - mqtt
+
+  data_storage:
+    build:
+      context: ..
+      dockerfile: docker/data_storage/Dockerfile
+    container_name: data-storage
+    restart: unless-stopped
+    depends_on:
+      - mqtt
+    volumes:
+      - sqlite_data:/data
+
+  data_clean:
+    build:
+      context: ..
+      dockerfile: docker/data_clean/Dockerfile
+    container_name: data-clean
+    restart: unless-stopped
+    depends_on:
+      - data_storage
+    volumes:
+      - sqlite_data:/data
+
+  data_export:
+    build:
+      context: ..
+      dockerfile: docker/data_export/Dockerfile
+    container_name: data-export
+    restart: unless-stopped
+    depends_on:
+      - data_storage
+    volumes:
+      - sqlite_data:/data
+volumes:
+  mqtt_data:
+  mqtt_log:
+  sqlite_data:

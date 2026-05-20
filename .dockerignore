@@ -1,0 +1,11 @@
+.git
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+*.log
+docker/mosquitto/data/
+docker/mosquitto/log/

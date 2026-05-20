@@ -1,0 +1,6 @@
+paho-mqtt>=2.0.0,<3.0.0
+ruff>=0.15.12
+aiosqlite>=0.18.0
+aiohttp>=3.9.5,<4.0.0
+PyYAML>=6.0
+pymap3d>=3.0.0

@@ -1,0 +1,17 @@
+mqtt:
+  namespace: scorpio
+
+  decoded:
+    lora: "{namespace}/decoded/lora"
+  
+  extract:
+    sat: "{namespace}/extract/sat"
+
+  preprocess:
+    sat: "{namespace}/preprocess/sat"
+
+  send:
+    sat: "{namespace}/send/sat"
+
+  uploaded:
+    sat: "{namespace}/uploaded/sat"
