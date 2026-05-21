@@ -50,6 +50,12 @@ class DataExportAPI:
             return {"success": False, "error": f"Unknown topic: {topic}"}
         return self._parse_response(result)
 
+    async def flush_pending(self) -> dict:
+        result = await self.send_pending_controller.flush_pending(
+            uploaded_topic=config.TOPIC_UPLOADED
+        )
+        return self._parse_response(result)
+
     async def shutdown(self) -> None:
         try:
             await self.mqtt_client.end_connection()

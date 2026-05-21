@@ -10,6 +10,7 @@ class ErrorCode(Enum):
     VAL02 = ("VAL02", "Invalid payload received", 400)
     PUB01 = ("PUB01", "MQTT publish failed", 500)
     PUB02 = ("PUB02", "Too many MQTT publish errors", 500)
+    PUB03 = ("PUB03", "Duplicated local_id in buffer", 400)
     CS01 = ("CS01", "Could not send the payload to the cloud server", 500)
     PR01 = (
         "PR01",

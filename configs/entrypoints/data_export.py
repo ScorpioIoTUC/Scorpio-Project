@@ -10,3 +10,8 @@ TOPIC_SEND_QOS = 1
 # Topics to publish
 TOPIC_UPLOADED = "scorpio/uploaded/sat"
 TOPIC_UPLOADED_QOS = 1
+
+# Send pending configuration
+## Number of ids to send in each batch to uplaoded topic.
+BUFFER_SIZE = 10
+MAX_TIME_GAP = 60  # seconds

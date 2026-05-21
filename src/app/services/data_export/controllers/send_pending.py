@@ -15,3 +15,11 @@ class SendPendingController:
             return result
         except AppError as e:
             return {"success": False, **e.to_dict()}
+
+    async def flush_pending(self, uploaded_topic: str) -> dict:
+        self.logger.debug("Flushing pending ids from buffer")
+        try:
+            result = await self.use_case.flush_pending(uploaded_topic)
+            return result
+        except AppError as e:
+            return {"success": False, **e.to_dict()}
