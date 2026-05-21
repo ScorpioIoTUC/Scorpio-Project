@@ -37,6 +37,10 @@ class AppError(Exception):
         return cls(ErrorCode.PUB02, details=details)
     
     @classmethod
+    def duplicated_local_id(cls, details=""):
+        return cls(ErrorCode.PUB03, details=details)
+    
+    @classmethod
     def cloud_send_error(cls, details=""):
         return cls(ErrorCode.CS01, details=details)    
     
