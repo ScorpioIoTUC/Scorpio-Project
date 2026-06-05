@@ -12,13 +12,17 @@ class HTTP:
         self.url = url
 
     async def get(
-        self, headers: dict = {}, params: dict = {}, data={}, json={}
+        self,
+        headers: dict | None = None,
+        params: dict | None = None,
+        data: dict | str | None = None,
+        json: dict | None = None,
     ) -> dict:
         return await self.client.get(
             HTTPRequestArgs(
                 url=self.url,
-                headers=headers,
-                params=params,
+                headers=headers or {},
+                params=params or {},
                 data=data,
                 json=json,
                 timeout=TIMEOUT,
@@ -26,13 +30,17 @@ class HTTP:
         )
 
     async def post(
-        self, headers: dict = {}, params: dict = {}, data={}, json={}
+        self,
+        headers: dict | None = None,
+        params: dict | None = None,
+        data: dict | str | None = None,
+        json: dict | None = None,
     ) -> dict:
         return await self.client.post(
             HTTPRequestArgs(
                 url=self.url,
-                headers=headers,
-                params=params,
+                headers=headers or {},
+                params=params or {},
                 data=data,
                 json=json,
                 timeout=TIMEOUT,
@@ -40,13 +48,17 @@ class HTTP:
         )
 
     async def patch(
-        self, headers: dict = {}, params: dict = {}, data={}, json={}
+        self,
+        headers: dict | None = None,
+        params: dict | None = None,
+        data: dict | str | None = None,
+        json: dict | None = None,
     ) -> dict:
         return await self.client.patch(
             HTTPRequestArgs(
                 url=self.url,
-                headers=headers,
-                params=params,
+                headers=headers or {},
+                params=params or {},
                 data=data,
                 json=json,
                 timeout=TIMEOUT,
@@ -54,13 +66,17 @@ class HTTP:
         )
 
     async def delete(
-        self, headers: dict = {}, params: dict = {}, data={}, json={}
+        self,
+        headers: dict | None = None,
+        params: dict | None = None,
+        data: dict | str | None = None,
+        json: dict | None = None,
     ) -> dict:
         return await self.client.delete(
             HTTPRequestArgs(
                 url=self.url,
-                headers=headers,
-                params=params,
+                headers=headers or {},
+                params=params or {},
                 data=data,
                 json=json,
                 timeout=TIMEOUT,
@@ -68,13 +84,17 @@ class HTTP:
         )
 
     async def put(
-        self, headers: dict = {}, params: dict = {}, data={}, json={}
+        self,
+        headers: dict | None = None,
+        params: dict | None = None,
+        data: dict | str | None = None,
+        json: dict | None = None,
     ) -> dict:
         return await self.client.put(
             HTTPRequestArgs(
                 url=self.url,
-                headers=headers,
-                params=params,
+                headers=headers or {},
+                params=params or {},
                 data=data,
                 json=json,
                 timeout=TIMEOUT,

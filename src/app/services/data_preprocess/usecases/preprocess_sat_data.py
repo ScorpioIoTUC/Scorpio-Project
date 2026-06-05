@@ -1,10 +1,8 @@
 from src.infra import MQTT, Geospatial
 from src.domain.exceptions.app_error import AppError
-from src.app.services.data_preprocess.types import (
-    SatelliteAdapter,
-    StarlinkAdapter,
-)
+from src.app.services.data_preprocess.entities.packet import Packet
 import json
+from dataclasses import asdict, replace
 
 
 class PreprocessSatDataUseCase:
@@ -19,28 +17,28 @@ class PreprocessSatDataUseCase:
         self.geospatial_client = geospatial_client
         self.topic_to_publish = topic_to_publish
         self.station_location = station_location
-        self.adapters: list[SatelliteAdapter] = [
-            StarlinkAdapter(),
-        ]
 
-    def _find_adapter(self, data: dict) -> SatelliteAdapter:
-        """Auto-detects the appropriate satellite adapter based on payload structure"""
-        for adapter in self.adapters:
-            if adapter.can_adapt(data):
-                return adapter
-        raise AppError.unidentified_satellite("No matching adapter found")
-
-    def _preprocess_payload(self, payload: str) -> dict:
+    def _preprocess_payload(self, payload: str) -> Packet:
         data = json.loads(payload)
-        adapter = self._find_adapter(data)
-        return adapter.adapt(data)
+        packet = Packet(
+            noradId=data.get("noradId"),
+            latitude=data.get("latitude"),
+            longitude=data.get("longitude"),
+            altitude=data.get("altitude"),
+            rssi=data.get("rssi"),
+            snr=data.get("snr"),
+            frequencyError=data.get("frequencyError"),
+            crc=data.get("crc"),
+            rawPayload=json.dumps(data),
+        )
+        return packet
 
-    def _add_derived_metrics(self, data: dict) -> dict:
-        lat = data.get("latitude")
-        lon = data.get("longitude")
-        alt = data.get("altitude")
+    def _add_derived_metrics(self, packet: Packet) -> Packet:
+        lat = packet.latitude
+        lon = packet.longitude
+        alt = packet.altitude
         if any(v is None for v in [lat, lon, alt]):
-            return data
+            return packet
         args = {
             "target_latitude": lat,
             "target_longitude": lon,
@@ -53,16 +51,24 @@ class PreprocessSatDataUseCase:
         elevation_angle = self.geospatial_client.get_elevation_angle(**args)
         # Calculate slant range
         slant_range = self.geospatial_client.get_slant_range(**args)
-        return {**data, "elevation_angle": elevation_angle, "slant_range": slant_range}
+        # Add metrics
+        packet.elevationAngle = elevation_angle
+        packet.slantDistance = slant_range
+
+        return replace(
+            packet,
+            elevationAngle=elevation_angle,
+            slantDistance=slant_range,
+        )
 
     async def execute(self, payload: str) -> dict:
         try:
             # Extract main attributes
-            data = self._add_derived_metrics(self._preprocess_payload(payload))
-            crc = data.get("crc", None)
+            packet = self._add_derived_metrics(self._preprocess_payload(payload))
+            crc = packet.crc
             # Publish preprocessed data
             await self.mqtt_client.publish(
-                topic=self.topic_to_publish, payload=json.dumps(data)
+                topic=self.topic_to_publish, payload=json.dumps(asdict(packet))
             )
             return {"success": True, "crc": crc}
         except json.JSONDecodeError as e:

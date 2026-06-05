@@ -114,15 +114,29 @@ class AioHTTPClient(HTTPClientContract):
         if args.timeout is not None:
             request_kwargs["timeout"] = aiohttp.ClientTimeout(total=float(args.timeout))
 
-        async with session.request(method, args.url, **request_kwargs) as response:
-            payload = await self._read_response_payload(response)
-            return {
-                "ok": 200 <= response.status < 300,
-                "status": response.status,
-                "headers": dict(response.headers),
-                "url": str(response.url),
-                "data": payload,
-            }
+            try:
+                async with session.request(
+                    method,
+                    args.url,
+                    **request_kwargs,
+                ) as response:
+                    payload = await self._read_response_payload(response)
+
+                    return {
+                        "ok": 200 <= response.status < 300,
+                        "status": response.status,
+                        "headers": dict(response.headers),
+                        "url": str(response.url),
+                        "data": payload,
+                    }
+
+            except (
+                aiohttp.InvalidURL,
+                aiohttp.ClientConnectorError,
+                aiohttp.ServerTimeoutError,
+                aiohttp.ClientError,
+            ) as e:
+                raise Exception(e)
 
     async def _read_response_payload(self, response: aiohttp.ClientResponse) -> Any:
         if response.status == 204:

@@ -44,8 +44,8 @@ class PublishPendingUseCase:
             try:
                 message = {
                     "local_id": row.get("id") if isinstance(row, dict) else row[0],
-                    "topic": row.get("topic") if isinstance(row, dict) else row[1],
-                    "payload": row.get("payload") if isinstance(row, dict) else row[2],
+                    "payload": row.get("payload") if isinstance(row, dict) else row[1],
+                    "topic": row.get("topic") if isinstance(row, dict) else row[2],
                 }
                 await self.mqtt_client.publish(
                     topic=target_topic,
