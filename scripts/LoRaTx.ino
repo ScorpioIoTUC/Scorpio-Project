@@ -9,7 +9,7 @@ SX1262 radio = new Module(8, 14, 12, 13);
 #define LORA_CODINGRATE       5
 #define TX_OUTPUT_POWER       5
 
-char txpacket[256];
+char txpacket[512];
 
 void setup() {
   Serial.begin(115200);
@@ -37,27 +37,50 @@ void setup() {
 
 void loop() {
 
-  const char* satelliteId = "1604";
-  bool crcOk = true;
-  double latitude = 37.7749;
-  double longitude = -122.4194;
-  double altitude = 550.0;
-  double rssi = -113.75;
-  double snr = -8.5;
-  double freqError = 10515.13672;
+  uint32_t noradId = 32783;
+
+  double latitude = -33.4489;
+  double longitude = -70.6693;
+  double altitude = 692.4;
+
+  int rssi = -118;
+  double snr = 7.3;
+
+  double slantDistance = 1245.8;
+  double elevationAngle = 42.7;
+
+  int frequencyError = -185;
+
+  bool crc = true;
+
+  const char* rawPayload =
+      "Q0FSVE9TQVQtMkF8VEVMRU1FVFJZfDE3NDkwNjYwMDA=";
 
   snprintf(
     txpacket,
     sizeof(txpacket),
-    "{\"starlink_id\":\"%s\",\"crc_ok\":%s,\"lat\":%.4f,\"lon\":%.4f,\"alt\":%.1f,\"rssi\":%.2f,\"snr\":%.1f,\"freq_error\":%.5f}",
-    satelliteId,
-    crcOk ? "true" : "false",
+    "{\"noradId\":%lu,"
+    "\"latitude\":%.4f,"
+    "\"longitude\":%.4f,"
+    "\"altitude\":%.1f,"
+    "\"rssi\":%d,"
+    "\"snr\":%.1f,"
+    "\"slantDistance\":%.1f,"
+    "\"elevationAngle\":%.1f,"
+    "\"frequencyError\":%d,"
+    "\"crc\":%s,"
+    "\"rawPayload\":\"%s\"}",
+    noradId,
     latitude,
     longitude,
     altitude,
     rssi,
     snr,
-    freqError
+    slantDistance,
+    elevationAngle,
+    frequencyError,
+    crc ? "true" : "false",
+    rawPayload
   );
 
   Serial.println("Enviando paquete:");
@@ -72,5 +95,10 @@ void loop() {
     Serial.println(state);
   }
 
-  delay(30000);
+  long randomDelay = random(500, 2001);
+
+  Serial.print("Delay: ");
+  Serial.println(randomDelay);
+
+  delay(randomDelay);
 }

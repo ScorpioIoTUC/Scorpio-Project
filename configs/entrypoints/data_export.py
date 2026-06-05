@@ -1,5 +1,10 @@
-API_URL = ""  # TODO: add endpoint url.
-CREDENTIALS = {}
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+API_URL = os.getenv("SCORPIO_API_URL", "")
+CREDENTIALS = {"bearer_token": os.getenv("SCORPIO_STATION_KEY", "")}
 # MQTT General parameters
 MQTT_HOST = "mqtt"
 MQTT_PORT = 1883

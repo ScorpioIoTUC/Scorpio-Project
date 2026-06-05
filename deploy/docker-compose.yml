@@ -56,11 +56,20 @@ services:
       dockerfile: docker/data_export/Dockerfile
     container_name: data-export
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - data_storage
     volumes:
       - sqlite_data:/data
+    env_file:
+      - ../.env
 volumes:
   mqtt_data:
   mqtt_log:
   sqlite_data:
+
+networks:
+  default:
+    external: true
+    name: scorpio-net

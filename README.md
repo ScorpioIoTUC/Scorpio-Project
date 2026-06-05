@@ -109,3 +109,21 @@ sudo usermod -aG docker $USER
 ```
 
 Then log out and back in.
+
+## Server connection
+You need an environment file (`.env`) to send packets to the Scorpio Server.
+
+The server requires authentication, so you must first register a station on the website. Once the station is registered, the server will provide a **one-time key that allows you to send data**.
+
+In this project, the `.env` file must be placed in the main directory.
+
+```bash
+SCORPIO_API_URL=<API_URL>
+SCORPIO_STATION_KEY=<KEY>
+```
+
+For **local development**, the API URL should be:
+
+```bash
+SCORPIO_API_URL=http://api:3000/packets
+```
