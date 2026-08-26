@@ -105,6 +105,14 @@ setup-host:
 	bash ./dependencies.sh --no-reboot
 
 setup-docker:
+	@if [ -f .env ]; then \
+		echo "[setup-docker] Using existing .env"; \
+	else \
+		printf '%s\n' \
+			'SCORPIO_API_URL=<API_URL>' \
+			'SCORPIO_STATION_KEY=<KEY>' > .env; \
+		echo "[setup-docker] Created .env; replace <API_URL> and <KEY> before sending data"; \
+	fi
 	bash ./scripts/bootstrap.sh --docker-only
 
 setup-all:
