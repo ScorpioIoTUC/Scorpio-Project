@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instalación de Scorpio</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <div class="brand">SCORPIO</div>
+            <h1>Configura tu sistema</h1>
+            <p>Completa los pasos en orden para preparar Scorpio.</p>
+        </header>
+
+        <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+
+        <section class="card" aria-labelledby="progress-title">
+            <div class="card-header">
+                <div>
+                    <span class="eyebrow">INSTALACIÓN</span>
+                    <h2 id="progress-title">Progreso de configuración</h2>
+                </div>
+                <span id="progress-label" class="progress-label">Cargando…</span>
+            </div>
+
+            <div class="progress-track" aria-hidden="true">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+
+            <ol id="steps" class="steps" aria-label="Pasos de instalación"></ol>
+        </section>
+
+        <p class="help">Mantén esta ventana abierta durante la instalación. El reinicio puede interrumpir la conexión temporalmente.</p>
+    </main>
+    <script src="app.js"></script>
+</body>
+</html>
