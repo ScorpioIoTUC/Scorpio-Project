@@ -1,5 +1,8 @@
 # Conexion a traves de SSH a la Raspberry PI e instalacion de dependencias
 
+[<- Atras ](/docs/page1.md)[/ Siguiente -> ](/docs/page3.md)
+
+
 ## Conexion a SSH
 Ahora deben buscar la configuracion del raspberry pi actualmente conectado por ethernet en la red wi-fi que
 se encuentran conectados. Una vez creada la configuracionde red, debemos acceder a la raspberry pi a traves de ssh. 
