@@ -6,14 +6,17 @@ Wants=docker.service
 [Service]
 Type=simple
 User=%i
-WorkingDirectory=/home/%i/Scorpio-Project
-ExecStart=/home/%i/Scorpio-Project/decoder/lora-decoder/venv/bin/python /home/%i/Scorpio-Project/decoder/lora-decoder/lora_decoder.py
-Environment=PATH=/home/%i/Scorpio-Project/decoder/lora-decoder/venv/bin:/usr/bin
-Environment=PYTHONPATH=/home/%i/Scorpio-Project
+
+WorkingDirectory=/home/%i/.local/share/scorpio/Scorpio-Project
+
+ExecStart=/home/%i/.local/share/scorpio/Scorpio-Project/decoder/lora-decoder/venv/bin/python /home/%i/.local/share/scorpio/Scorpio-Project/decoder/lora-decoder/lora_decoder.py
+
+Environment=PATH=/home/%i/.local/share/scorpio/Scorpio-Project/decoder/lora-decoder/venv/bin:/usr/bin
+Environment=PYTHONPATH=/home/%i/.local/share/scorpio/Scorpio-Project
 Environment=PYTHONUNBUFFERED=1
 
 # Restart on failure
-Restart=always
+Restart=on-failure
 RestartSec=10
 
 # Logging
