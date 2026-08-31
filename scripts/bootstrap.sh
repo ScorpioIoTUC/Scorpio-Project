@@ -15,9 +15,36 @@ ensure_docker() {
         return
     fi
 
-    echo "[docker] Installing Docker and Docker Compose plugin..."
+    if ! command -v apt-get >/dev/null 2>&1; then
+        echo "[docker] Unsupported package manager: apt-get was not found."
+        exit 1
+    fi
+
+    . /etc/os-release
+    architecture="$(dpkg --print-architecture 2>/dev/null || echo unknown)"
+    echo "[docker] Installing Docker for ${ID:-unknown} ${VERSION_CODENAME:-unknown} (${architecture})..."
+
     sudo apt-get update -y
-    sudo apt-get install -y docker.io docker-compose-plugin
+
+    # Debian Trixie provides the Compose v2 plugin through docker-compose,
+    # while the official Docker repository uses docker-compose-plugin.
+    if apt-cache show docker-compose-plugin 2>/dev/null | grep -q '^Package:'; then
+        sudo apt-get install -y docker.io docker-compose-plugin
+    elif apt-cache show docker-compose 2>/dev/null | grep -q '^Package:'; then
+        sudo apt-get install -y docker.io docker-compose
+    else
+        echo "[docker] No compatible Docker Compose package was found."
+        echo "[docker] Configure Docker's official repository or install Docker manually."
+        exit 1
+    fi
+
+    if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>&1; then
+        echo "[docker] Docker Compose installation could not be verified."
+        exit 1
+    fi
+
+    echo "[docker] $(docker --version)"
+    echo "[docker] $(docker compose version)"
 }
 
 run_host() {
