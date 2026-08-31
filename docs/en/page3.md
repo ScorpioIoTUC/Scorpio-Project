@@ -1,34 +1,49 @@
-# 3. Running and monitoring the services
+# 3. Running and monitoring with Scorpio CLI
 
-[← Previous](page2.md) | [Contents](README.md) | [Next: Database and server →](page4.md)
+[← Previous](page2.md) | [Contents](README.md) | [Next: Scorpio Developers →](page4.md)
 
-## Start
+Scorpio CLI provides a single interface for installing, running, and managing the local infrastructure.
 
-    make start
+## Available commands
 
-This command builds the Docker stack and configures the LoRa decoder service. To watch the build and live logs:
+```text
+scorpio ui             Start the setup interface
+scorpio setup          Install host dependencies
+scorpio setup-docker   Configure and start Docker infrastructure
+scorpio start          Start Scorpio services
+scorpio stop           Stop Scorpio services and preserve data
+scorpio status         Show service status
+scorpio logs           Follow service logs
+scorpio build          Build Docker images
+scorpio reset          Stop services and permanently remove Docker data
+```
 
-    docker compose -f deploy/docker-compose.yml up --build
+## Common operations
 
-To install the decoder manually:
+Start the services:
 
-    bash decoder/install_decoders.sh
+```bash
+scorpio start
+```
 
-## Logs
+Inspect their status or follow their logs:
 
-    make logs
-    make save-logs
+```bash
+scorpio status
+scorpio logs
+```
 
-The second command saves logs in `logs/`. To inspect Mosquitto:
+Stop the services without deleting persistent data:
 
-    docker compose -f deploy/docker-compose.yml exec mqtt sh -c 'tail -f /mosquitto/log/mosquitto.log'
+```bash
+scorpio stop
+```
 
-## Stop
+`scorpio reset` removes the Docker volumes containing MQTT data, logs, and the SQLite database. It requires explicit confirmation.
 
-    make stop
+## Upgrade or uninstall Scorpio CLI
 
-This keeps the volumes. To remove containers, volumes, and networks:
-
-    make delete-all
-
-Run `make help` to see all available commands.
+```bash
+pipx upgrade scorpio-cli
+pipx uninstall scorpio-cli
+```

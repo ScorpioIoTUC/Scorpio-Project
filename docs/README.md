@@ -8,7 +8,7 @@ This documentation explains how to install, run, monitor, and connect the Scorpi
 The two versions cover the same workflow:
 
 1. Hardware and Raspberry Pi preparation
-2. SSH access and installation
-3. Starting, stopping, and monitoring services
-4. Local database and Scorpio Server connection
-5. LoRa decoder and test transmitter
+2. SSH access and Scorpio CLI installation
+3. Running and monitoring services with Scorpio CLI
+4. Scorpio Developers
+5. Scorpio Developers
