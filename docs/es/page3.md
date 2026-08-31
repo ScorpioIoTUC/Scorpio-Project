@@ -1,34 +1,49 @@
-# 3. Ejecución y monitoreo de los servicios
+# 3. Ejecución y monitoreo con Scorpio CLI
 
-[← Anterior](page2.md) | [Índice](README.md) | [Siguiente: Base de datos y servidor →](page4.md)
+[← Anterior](page2.md) | [Índice](README.md) | [Siguiente: Scorpio Developers →](page4.md)
 
-## Iniciar
+Scorpio CLI centraliza la instalación, ejecución y administración de la infraestructura local.
 
-    make start
+## Comandos disponibles
 
-Este comando construye el stack de Docker y configura el servicio del decodificador LoRa. Para ver la compilación y los registros en tiempo real:
+```text
+scorpio ui             Inicia la interfaz de configuración
+scorpio setup          Instala las dependencias del sistema
+scorpio setup-docker   Configura e inicia la infraestructura Docker
+scorpio start          Inicia los servicios de Scorpio
+scorpio stop           Detiene los servicios y conserva los datos
+scorpio status         Muestra el estado de los servicios
+scorpio logs           Muestra los registros en tiempo real
+scorpio build          Construye las imágenes Docker
+scorpio reset          Detiene los servicios y elimina permanentemente sus datos
+```
 
-    docker compose -f deploy/docker-compose.yml up --build
+## Operación habitual
 
-Para instalar manualmente el decodificador:
+Inicia los servicios:
 
-    bash decoder/install_decoders.sh
+```bash
+scorpio start
+```
 
-## Registros
+Consulta su estado o sigue sus registros:
 
-    make logs
-    make save-logs
+```bash
+scorpio status
+scorpio logs
+```
 
-El segundo comando guarda los registros en `logs/`. Para consultar Mosquitto:
+Detén los servicios sin eliminar los datos persistentes:
 
-    docker compose -f deploy/docker-compose.yml exec mqtt sh -c 'tail -f /mosquitto/log/mosquitto.log'
+```bash
+scorpio stop
+```
 
-## Detener
+`scorpio reset` elimina los volúmenes de Docker que contienen los datos MQTT, los registros y la base de datos SQLite. Por seguridad, requiere una confirmación explícita.
 
-    make stop
+## Actualizar o desinstalar Scorpio CLI
 
-Conserva los volúmenes. Para eliminar contenedores, volúmenes y redes:
-
-    make delete-all
-
-Ejecuta `make help` para ver todos los comandos disponibles.
+```bash
+pipx upgrade scorpio-cli
+pipx uninstall scorpio-cli
+```

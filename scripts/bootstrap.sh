@@ -63,15 +63,21 @@ run_docker() {
 
     echo "[docker] Building and starting infrastructure..."
     cd "$PROJECT_ROOT"
-    # Levanta infraestructura sin depender de un target "up" en Makefile.
+
     if docker info >/dev/null 2>&1; then
-        docker compose -f deploy/docker-compose.yml up -d --build
-        docker compose -f deploy/docker-compose.yml ps
+        docker_command=(docker)
     else
         echo "[docker] Docker permission denied; retrying with sudo..."
-        sudo docker compose -f deploy/docker-compose.yml up -d --build
-        sudo docker compose -f deploy/docker-compose.yml ps
+        docker_command=(sudo docker)
     fi
+
+    if ! "${docker_command[@]}" network inspect scorpio-net >/dev/null 2>&1; then
+        echo "[docker] Creating external network scorpio-net..."
+        "${docker_command[@]}" network create scorpio-net >/dev/null
+    fi
+
+    "${docker_command[@]}" compose -f deploy/docker-compose.yml up -d --build
+    "${docker_command[@]}" compose -f deploy/docker-compose.yml ps
 
     echo "[docker] Infrastructure is up."
     echo "[docker] If permission issues persist, re-login and rerun: $0 --docker-only"

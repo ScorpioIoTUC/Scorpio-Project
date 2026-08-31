@@ -1,4 +1,4 @@
-# 2. Acceso por SSH e instalación de dependencias
+# 2. Acceso por SSH e instalación de Scorpio CLI
 
 [← Anterior](page1.md) | [Índice](README.md) | [Siguiente: Servicios →](page3.md)
 
@@ -12,20 +12,43 @@ Conéctate con el usuario creado en Raspberry Pi Imager:
 
     ssh <usuario>@<direccion-ip>
 
-## Instalar Scorpio
+## Instalar Scorpio CLI
 
-    git clone https://github.com/ScorpioIoTUC/Scorpio-Project.git
-    cd Scorpio-Project
-    make setup-all
+Los sistemas basados en Debian protegen el entorno de Python del sistema. Instala Scorpio CLI con `pipx`, sin utilizar `sudo pip` ni `--break-system-packages`:
 
-El proceso puede tardar entre tres y cinco minutos. Cuando finalice, reinicia:
+```bash
+sudo apt update
+sudo apt install -y pipx
+pipx ensurepath
+source ~/.profile
+pipx install scorpio-cli
+```
 
-    sudo reboot
+Si Scorpio CLI ya está instalado, actualízalo a la última versión:
+
+```bash
+pipx upgrade scorpio-cli
+```
+
+## Instalar las dependencias del sistema
+
+Scorpio CLI descarga la última versión disponible de Scorpio-Project y ejecuta la instalación de dependencias:
+
+```bash
+scorpio setup
+```
+
+El proceso puede tardar varios minutos. Cuando finalice, reinicia la Raspberry Pi:
+
+```bash
+sudo reboot
+```
 
 Después del reinicio, vuelve a conectarte y prepara Docker:
 
-    ssh <usuario>@<direccion-ip>
-    cd Scorpio-Project
-    make setup-docker
+```bash
+ssh <usuario>@<direccion-ip>
+scorpio setup-docker
+```
 
-El comando crea `.env` si no existe y levanta la infraestructura Docker. Completa sus variables antes de enviar datos al servidor. La instalación termina cuando aparece `Infrastructure is up.`.
+El comando instala o verifica Docker, crea `.env` si no existe y levanta la infraestructura. La instalación termina cuando aparece `Infrastructure is up.`.

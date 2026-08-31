@@ -1,4 +1,4 @@
-# 2. SSH access and dependency installation
+# 2. SSH access and Scorpio CLI installation
 
 [← Previous](page1.md) | [Contents](README.md) | [Next: Services →](page3.md)
 
@@ -12,20 +12,43 @@ Connect with the user created in Raspberry Pi Imager:
 
     ssh <username>@<ip-address>
 
-## Install Scorpio
+## Install Scorpio CLI
 
-    git clone https://github.com/ScorpioIoTUC/Scorpio-Project.git
-    cd Scorpio-Project
-    make setup-all
+Debian-based systems protect the system Python environment. Install Scorpio CLI with `pipx` instead of using `sudo pip` or `--break-system-packages`:
 
-The process may take three to five minutes. When it finishes, reboot:
+```bash
+sudo apt update
+sudo apt install -y pipx
+pipx ensurepath
+source ~/.profile
+pipx install scorpio-cli
+```
 
-    sudo reboot
+If Scorpio CLI is already installed, upgrade it to the latest version:
+
+```bash
+pipx upgrade scorpio-cli
+```
+
+## Install system dependencies
+
+Scorpio CLI downloads the latest available Scorpio-Project release and installs its dependencies:
+
+```bash
+scorpio setup
+```
+
+The process may take several minutes. When it finishes, reboot the Raspberry Pi:
+
+```bash
+sudo reboot
+```
 
 After the reboot, reconnect and prepare Docker:
 
-    ssh <username>@<ip-address>
-    cd Scorpio-Project
-    make setup-docker
+```bash
+ssh <username>@<ip-address>
+scorpio setup-docker
+```
 
-This command creates `.env` if it does not exist and starts the Docker infrastructure. Complete its variables before sending data to the server. Installation is complete when `Infrastructure is up.` appears.
+This command installs or checks Docker, creates `.env` if it does not exist, and starts the infrastructure. Installation is complete when `Infrastructure is up.` appears.
