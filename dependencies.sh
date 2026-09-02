@@ -39,7 +39,7 @@ sudo apt-get update --yes
 
 echo "--- 2/7 Essential dependencies ---"
 sudo apt-get install -y --no-install-recommends \
-    build-essential cmake git pkg-config swig \
+    curl build-essential cmake git pkg-config swig \
     python3-dev python3-pip python3-setuptools \
     python3-numpy python3-matplotlib python3-scipy
 
@@ -75,6 +75,15 @@ sudo ldconfig
 
 
 echo "--- 7/7 Tailscale installation ---"
+
+if command -v tailscale >/dev/null 2>&1; then
+    echo "Tailscale is already installed."
+else
+    curl -fsSL https://tailscale.com/install.sh | sh
+fi
+
+sudo systemctl enable --now tailscaled
+tailscale version
 
 echo "--- Installation complete! ---"
 sync

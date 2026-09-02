@@ -131,4 +131,3 @@ lint:
 		exit 1; \
 	fi
 	$(VENV_PY) -m ruff check . --fix
-	
