@@ -56,7 +56,16 @@ sudo bash -c 'echo "blacklist dvb_usb_rtl28xxu" > /etc/modprobe.d/blacklist-rtl.
 sudo wget -q https://raw.githubusercontent.com/osmocom/rtl-sdr/master/rtl-sdr.rules -O /etc/udev/rules.d/20-rtlsdr.rules
 
 echo "--- 5/7 Volk optimization ---"
-volk_profile
+VOLK_CONFIG="${HOME}/.volk/volk_config"
+
+if ! command -v volk_profile >/dev/null 2>&1; then
+    echo "volk_profile is not available; skipping optimization."
+elif [ -f "$VOLK_CONFIG" ]; then
+    echo "VOLK is already optimized for this user."
+else
+    echo "Profiling VOLK kernels. This may take several minutes..."
+    volk_profile
+fi
 
 echo "--- 6/7 GR-LoRa-SDR installation ---"
 if [ -d "gr-lora_sdr" ]; then 
