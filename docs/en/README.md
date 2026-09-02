@@ -1,13 +1,16 @@
 # Scorpio local infrastructure
 
-This guide explains how to prepare a Raspberry Pi and install, run, and monitor the local infrastructure with Scorpio CLI.
+This guide explains how to prepare a Raspberry Pi, install Scorpio, and configure secure remote access.
 
-## Contents
+## Installation
 
-1. [Hardware and Raspberry Pi preparation](page1.md)
-2. [SSH access and Scorpio CLI installation](page2.md)
-3. [Running and monitoring with Scorpio CLI](page3.md)
-4. [Scorpio Developers — Part 1](page4.md)
-5. [Scorpio Developers — Part 2](page5.md)
+1. [Raspberry Pi OS installation and local access](page1.md)
+2. [Scorpio CLI installation](page2.md)
+3. [Remote access with Tailscale](page3.md)
+
+## Scorpio Developers
+
+4. [Scorpio Developers — Part 1](page4.md) *(coming soon)*
+5. [Scorpio Developers — Part 2](page5.md) *(coming soon)*
 
 [Versión en español](../es/README.md) · [Documentation home](../README.md)

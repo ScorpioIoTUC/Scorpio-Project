@@ -1,49 +1,97 @@
-# 3. Running and monitoring with Scorpio CLI
+# 3. Remote access with Tailscale
 
-[← Previous](page2.md) | [Contents](README.md) | [Next: Scorpio Developers →](page4.md)
+[← Previous: Scorpio CLI](page2.md) | [Contents](README.md) | [Next: Scorpio Developers →](page4.md)
 
-Scorpio CLI provides a single interface for installing, running, and managing the local infrastructure.
+Tailscale creates a private network between the Raspberry Pi and your devices. It lets you connect over SSH from outside the local network without opening router ports.
 
-## Available commands
+## Enable Tailscale on the Raspberry Pi
+
+`scorpio setup` installs Tailscale and starts its service. Verify the installation:
+
+```bash
+tailscale version
+sudo systemctl status tailscaled
+```
+
+Press `q` to exit the service view. Then link the Raspberry Pi to your account:
+
+```bash
+sudo tailscale up
+```
+
+The command displays a one-time authentication URL:
 
 ```text
-scorpio ui             Start the setup interface
-scorpio setup          Install host dependencies
-scorpio setup-docker   Configure and start Docker infrastructure
-scorpio start          Start Scorpio services
-scorpio stop           Stop Scorpio services and preserve data
-scorpio status         Show service status
-scorpio logs           Follow service logs
-scorpio build          Build Docker images
-scorpio reset          Stop services and permanently remove Docker data
+To authenticate, visit:
+
+    https://login.tailscale.com/a/...
 ```
 
-## Common operations
+Open the link, sign in to Tailscale, and authorize the device. The terminal displays `Success.` when linking is complete.
 
-Start the services:
+## Get the Tailscale IP address
+
+Check the status and the IPv4 address assigned to the Raspberry Pi in its terminal:
 
 ```bash
-scorpio start
+tailscale status
+tailscale ip -4
 ```
 
-Inspect their status or follow their logs:
+The address has a format similar to `100.x.y.z`. Do not use a documentation example as the device's actual address.
+
+## Prepare the client computer
+
+Install the [Tailscale application](https://tailscale.com/docs/install) on the computer you will connect from and sign in with an account that has access to the same Tailscale network.
+
+If the application is already installed and connected, you do not need to reinstall Tailscale or run another terminal installer.
+
+## Connect over SSH through Tailscale
+
+**With Tailscale active on both devices**, run the following command from the client computer:
 
 ```bash
-scorpio status
-scorpio logs
+ssh <username>@<raspberry-tailscale-ip>
 ```
 
-Stop the services without deleting persistent data:
+For example:
 
 ```bash
-scorpio stop
+ssh scorpio@100.x.y.z
 ```
 
-`scorpio reset` removes the Docker volumes containing MQTT data, logs, and the SQLite database. It requires explicit confirmation.
 
-## Upgrade or uninstall Scorpio CLI
+<figure>
+<img src="../imgs/installation/tailscale-status.png"alt="Terminal showing that the Scorpio Docker infrastructure is running">
+<figcaption>Figure 1. Example of the Tailscale application on Mac OS. To connect using Tailscale, it must always be active</figcaption>
+</figure>
+
+Once the SSH connection has been established, you can run commands on the Raspberry Pi as if you were sitting in front of it.
+
+## Recommendations for using Tailscale
+
+If the Tailscale command is available on the client, you can test connectivity first:
 
 ```bash
-pipx upgrade scorpio-cli
-pipx uninstall scorpio-cli
+tailscale ping <raspberry-tailscale-ip>
 ```
+
+Running `tailscale ping` against that address from the Raspberry Pi itself displays `is local Tailscale IP`. This is expected, but it does not test the connection from the client computer.
+
+The first SSH connection may display a host authenticity warning. Compare the displayed fingerprint with the Raspberry Pi fingerprint:
+
+```bash
+sudo ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+```
+
+If they match, answer `yes`. If the same Raspberry Pi was already known through its local IP address, SSH may also report that the key is associated with another address. This is expected when it is the same device.
+
+<!-- ## Quick troubleshooting
+
+```bash
+tailscale status
+sudo systemctl restart tailscaled
+sudo tailscale up
+```
+
+If the Raspberry Pi does not appear in the application, confirm that both devices have Internet access and belong to the same Tailscale network. -->
