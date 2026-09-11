@@ -3,6 +3,7 @@
 set -euo pipefail
 
 MODE="${1:---all}"
+MODULE="${MODULE:-bootstrap}"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 log() {
