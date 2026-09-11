@@ -1,7 +1,5 @@
 # Scorpio local infrastructure
 
-This guide explains how to prepare a Raspberry Pi, install Scorpio, and configure secure remote access.
-
 ## Installation
 
 1. [Raspberry Pi OS installation and local access](page1.md)

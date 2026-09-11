@@ -1,12 +1,107 @@
-# 2. Instalación de Scorpio CLI
+# 2. Instalación de Scorpio
 
 [← Anterior: acceso local](page1.md) | [Índice](README.md) | [Siguiente: Tailscale →](page3.md)
 
-Esta etapa debe ejecutarse dentro de la Raspberry Pi, después de conectarse por SSH.
+> ⚠️ La interfaz web local todavía está en desarrollo. Si encuentras un error, repórtalo en [Issues](https://github.com/ScorpioIoTUC/Scorpio-Project/issues).
 
-## Instalar Scorpio CLI
+Scorpio puede instalarse desde la interfaz web —la opción recomendada— o directamente desde la terminal de la Raspberry Pi.
 
-Los sistemas basados en Debian protegen el entorno Python del sistema. Por eso, Scorpio CLI debe instalarse con `pipx`, sin utilizar `sudo pip` ni `--break-system-packages`.
+## Opción A: instalar mediante la interfaz web (recomendado)
+
+En este método, Scorpio CLI se instala en el computador desde el que administrarás la Raspberry Pi. La UI se conecta por SSH y ejecuta la instalación en el dispositivo remoto.
+
+### 1. Instalar Scorpio CLI
+
+En macOS, crea un entorno virtual e instala Scorpio CLI con `pip` o `pip3`:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install scorpio-cli
+# También puedes usar: pip3 install scorpio-cli
+```
+
+En Linux, se recomienda instalar `pipx` con el gestor de paquetes de la distribución:
+
+```bash
+sudo apt update
+sudo apt install -y pipx
+pipx ensurepath
+pipx install scorpio-cli
+```
+
+En Windows PowerShell:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install scorpio-cli
+```
+
+Si Scorpio CLI ya está instalado, actualízalo según el método utilizado:
+
+```bash
+# macOS o entorno virtual
+pip install --upgrade scorpio-cli
+# También puedes usar: pip3 install --upgrade scorpio-cli
+
+# Linux con pipx
+pipx upgrade scorpio-cli
+```
+
+### 2. Abrir la UI e iniciar sesión
+
+Ejecuta:
+
+```bash
+scorpio ui
+```
+
+El terminal mostrará:
+
+```text
+INFO:root:Server started at http://localhost:8000
+```
+
+Abre [http://localhost:8000](http://localhost:8000) e ingresa el hostname o dirección IP, usuario y contraseña SSH de la Raspberry Pi. Ambos dispositivos deben estar accesibles desde la misma red o mediante Tailscale.
+
+<figure>
+<img src="../imgs/installation/scorpio-ui-ssh-login.png" alt="Formulario de conexión SSH de la interfaz web de Scorpio">
+<figcaption>Figura 1. Inicio de sesión SSH en la Raspberry Pi.</figcaption>
+</figure>
+
+### 3. Iniciar la instalación
+
+Después de conectarte aparecerá el panel de instalación. Verifica que la Raspberry Pi tenga conexión a Internet y espacio disponible, y haz clic en **Iniciar instalación**.
+
+<figure>
+<img src="../imgs/installation/scorpio-ui-install-ready.png" alt="Panel de Scorpio listo para iniciar la instalación">
+<figcaption>Figura 2. Panel listo para iniciar la instalación.</figcaption>
+</figure>
+
+La UI descarga el último release de Scorpio-Project, instala las dependencias del host y prepara la infraestructura Docker. El proceso puede tardar varios minutos y genera una gran cantidad de logs.
+
+<figure>
+<img src="../imgs/installation/scorpio-ui-install-logs.png" alt="Logs de instalación de Scorpio mostrados en tiempo real">
+<figcaption>Figura 3. Progreso y logs de instalación en tiempo real.</figcaption>
+</figure>
+
+Revisa los logs durante la instalación. Si ocurre un problema, el estado cambiará a **Failed** y el último registro indicará la causa. Cuando el proceso finalice correctamente, aparecerá **Completed**.
+
+### 4. Reiniciar y administrar los servicios
+
+Después de completar la instalación, se recomienda usar el botón **Reiniciar Raspberry Pi**. La conexión se cerrará temporalmente; espera unos minutos y vuelve a iniciar sesión cuando el dispositivo esté disponible.
+
+La UI mostrará el estado de la infraestructura, los logs de los servicios y los controles **Start** y **Stop**. Usa **Update page** para volver a consultar el estado y reconectar los logs cuando sea necesario.
+
+<figure>
+<img src="../imgs/installation/scorpio-ui-services.png" alt="Panel de servicios y logs de infraestructura de Scorpio">
+<figcaption>Figura 4. Administración de la infraestructura y logs de servicios.</figcaption>
+</figure>
+
+## Opción B: instalar desde la terminal
+
+Conéctate por SSH a la Raspberry Pi e instala Scorpio CLI con `pipx`:
 
 ```bash
 sudo apt update
@@ -16,60 +111,26 @@ source ~/.profile
 pipx install scorpio-cli
 ```
 
-Una instalación correcta muestra un resultado similar al siguiente; las versiones pueden ser distintas:
-
-```text
-installed package scorpio-cli <version>, installed using Python <version>
-These apps are now globally available
-  - scorpio
-done!
-```
-
-Si Scorpio CLI ya está instalado, actualízalo en lugar de volver a instalarlo:
+Si ya está instalado:
 
 ```bash
 pipx upgrade scorpio-cli
 ```
 
-Comprueba que el comando esté disponible:
+Comprueba la instalación y ejecuta el setup:
 
 ```bash
 scorpio --help
-```
-
-## Instalar Scorpio
-
-El siguiente paso es obligatorio. Scorpio CLI descarga la última versión compatible de Scorpio-Project, instala las dependencias de bajo nivel y configura la infraestructura Docker.
-
-```bash
 scorpio setup
 ```
 
-El proceso puede tardar varios minutos. Finaliza correctamente cuando la terminal indica que la infraestructura está activa.
-
-<figure>
-<img src="../imgs/installation/scorpio-infrastructure-ready.png" alt="Terminal mostrando que la infraestructura Docker de Scorpio está activa">
-<figcaption>Figura 1. Instalación de Scorpio e infraestructura Docker iniciada correctamente.</figcaption>
-</figure>
-
-No es necesario ejecutar `scorpio setup-docker` después de una instalación correcta mediante `scorpio setup`.
-
-## Reiniciar y verificar
-
-Reinicia la Raspberry Pi para aplicar los cambios de grupos, dispositivos y servicios:
+El comando descarga el último release compatible, ejecuta `setup-host` y prepara Docker con `setup-docker`. Cuando termine, reinicia y verifica los servicios:
 
 ```bash
 sudo reboot
-```
-
-La conexión SSH se cerrará. Espera a que el equipo vuelva a iniciar, conéctate otra vez y verifica los servicios:
-
-```bash
-ssh <usuario>@<direccion-ip>
+# Después de volver a conectarte por SSH:
 scorpio status
 ```
-
-El reinicio también activa el permiso del usuario para comunicarse con Docker. Si se intenta ejecutar `scorpio status` antes del reinicio, puede aparecer `permission denied while trying to connect to the Docker daemon socket`.
 
 ## Referencia de comandos
 
@@ -87,13 +148,16 @@ scorpio reset          Detiene los servicios y elimina permanentemente sus datos
 scorpio connect2db     Abre una conexión con la base de datos SQLite de Scorpio
 ```
 
-Utiliza `scorpio --help` para ver la ayuda general. El comando `scorpio setup-docker` queda disponible para reinstalar o reparar únicamente la capa Docker; no forma parte del flujo normal descrito arriba.
-
 `scorpio reset` elimina los volúmenes con los datos MQTT, los registros y la base de datos SQLite, por lo que exige una confirmación explícita.
 
 ## Actualizar o desinstalar Scorpio CLI
 
 ```bash
+# macOS o entorno virtual
+pip install --upgrade scorpio-cli
+pip uninstall scorpio-cli
+
+# Linux con pipx
 pipx upgrade scorpio-cli
 pipx uninstall scorpio-cli
 ```
