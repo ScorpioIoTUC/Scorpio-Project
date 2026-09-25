@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 from src.libs.logging_client.logging_client_contract import LoggingClientContract
@@ -19,7 +20,8 @@ class PythonLoggingClient(LoggingClientContract):
             args: Initialization arguments containing logger_name and client_name.
         """
         self.logger = logging.getLogger(args.logger_name)
-        self.logger.setLevel(logging.INFO)
+        level_name = os.getenv("SCORPIO_LOG_LEVEL", "INFO").upper()
+        self.logger.setLevel(getattr(logging, level_name, logging.INFO))
 
         if not self.logger.handlers:
             self._configure_stdout_handler()

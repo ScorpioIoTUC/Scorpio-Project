@@ -17,7 +17,7 @@ class DataPreprocessAPI:
 
     def _parse_response(self, result: dict) -> dict:
         if result["success"]:
-            self.logger.info(result["message"])
+            self.logger.debug(result["message"])
         else:
             self.logger.error(
                 f"{result['error_code']}: {result.get('message')} - {result.get('details', '')}"
@@ -40,7 +40,7 @@ class DataPreprocessAPI:
 
     async def handle_message(self, topic: str, payload: str) -> dict:
         if topic == config.MQTT_SUB_TOPIC_1:
-            self.logger.info(f"Received message on topic '{config.MQTT_SUB_TOPIC_1}'")
+            self.logger.debug(f"Received message on topic '{config.MQTT_SUB_TOPIC_1}'")
             result = await self.preprocess_sat_data_controller.handle(payload)
         else:
             self.logger.warning(f"Received message on unhandled topic: {topic}")

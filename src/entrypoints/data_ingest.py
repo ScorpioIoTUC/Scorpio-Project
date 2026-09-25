@@ -1,13 +1,22 @@
-from src.infra import Logging
 import asyncio
+import json
+
 from src.app.services.data_ingest.api import DataIngestAPI
+from src.infra import Logging
 
 
 async def listener(api: DataIngestAPI) -> None:
     loop = asyncio.get_running_loop()
 
     def handle_message(topic: str, payload: str) -> None:
-        api.logger.info(f"Callback received MQTT message on topic '{topic}'")
+        try:
+            parsed_payload = json.loads(payload)
+        except (TypeError, json.JSONDecodeError):
+            parsed_payload = payload
+        event = {"topic": topic, "payload": parsed_payload}
+        api.logger.info(
+            f"MQTT message received: {json.dumps(event, ensure_ascii=False, separators=(',', ':'))}"
+        )
         future = asyncio.run_coroutine_threadsafe(
             api.handle_message(topic, payload), loop
         )

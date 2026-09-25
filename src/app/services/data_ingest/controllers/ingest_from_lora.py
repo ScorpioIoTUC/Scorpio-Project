@@ -11,10 +11,10 @@ class IngestFromLoraController:
         self.use_case = IngestFromLoraUseCase(mqtt_client)
 
     async def handle(self, payload: str) -> dict:
-        self.logger.info(f"Processing message from '{config.MQTT_SUB_TOPIC_1}'")
+        self.logger.debug(f"Processing message from '{config.MQTT_SUB_TOPIC_1}'")
         try:
             result = await self.use_case.execute(payload)
-            self.logger.info("Message ingested and published successfully")
+            self.logger.debug("Message ingested and published successfully")
             return result
         except AppError as e:
             self.logger.error(f"Error occurred while processing message: {e}")

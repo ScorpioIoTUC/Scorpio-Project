@@ -32,7 +32,7 @@ class DataStorageAPI:
     def _parse_response(self, result: dict) -> dict:
         """Helper to log results in a consistent format."""
         if result["success"]:
-            self.logger.info(result["message"])
+            self.logger.debug(result["message"])
         else:
             self.logger.error(
                 f"{result['error_code']}: {result.get('message')} - {result.get('details', '')}"

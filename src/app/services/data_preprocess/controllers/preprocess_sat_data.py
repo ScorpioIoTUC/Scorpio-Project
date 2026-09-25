@@ -23,14 +23,14 @@ class PreprocessSatDataController:
         )
 
     async def handle(self, payload: str) -> dict:
-        self.logger.info(f"Preprocessing message from '{config.MQTT_SUB_TOPIC_1}'")
+        self.logger.debug(f"Preprocessing message from '{config.MQTT_SUB_TOPIC_1}'")
         try:
             result = await self.use_case.execute(payload)
             crc = result.get("crc", None)
             if crc is not None and not crc:
                 self.logger.warning("CRC check failed for received data")
             elif crc is not None and crc:
-                self.logger.info("CRC OK and data preprocessed successfully")
+                self.logger.debug("CRC OK and data preprocessed successfully")
             return result
         except AppError as e:
             return {"success": False, **e.to_dict()}

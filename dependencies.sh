@@ -124,5 +124,4 @@ if [ "$REBOOT_AFTER_INSTALL" -eq 1 ]; then
     sudo reboot
 else
     echo "log:info:${MODULE}:reboot:skipped:No reboot requested"
-    echo "log:warning:${MODULE}:reboot:recommended:Reboot manually before running Docker services"
 fi
