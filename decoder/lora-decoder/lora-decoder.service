@@ -15,8 +15,8 @@ Environment=PATH=/home/%i/.local/share/scorpio/Scorpio-Project/decoder/lora-deco
 Environment=PYTHONPATH=/home/%i/.local/share/scorpio/Scorpio-Project
 Environment=PYTHONUNBUFFERED=1
 
-# Restart on failure
-Restart=on-failure
+# Keep the decoder available after MQTT or infrastructure restarts.
+Restart=always
 RestartSec=10
 
 # Logging
