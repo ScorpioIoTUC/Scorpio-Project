@@ -109,9 +109,9 @@ setup-docker:
 		echo "[setup-docker] Using existing .env"; \
 	else \
 		printf '%s\n' \
-			'SCORPIO_API_URL=<API_URL>' \
+			'SCORPIO_API_URL=<API_BASE_URL>' \
 			'SCORPIO_STATION_KEY=<KEY>' > .env; \
-		echo "[setup-docker] Created .env; replace <API_URL> and <KEY> before sending data"; \
+		echo "[setup-docker] Created .env; replace <API_BASE_URL> and <KEY> before sending data"; \
 	fi
 	bash ./scripts/bootstrap.sh --docker-only
 

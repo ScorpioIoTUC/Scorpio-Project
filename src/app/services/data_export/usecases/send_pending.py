@@ -114,7 +114,7 @@ class SendPendingUseCase:
                 response = await self.http_client.post(json=data)
                 if not response["ok"]:
                     raise AppError.cloud_send_error(
-                        f"Failed to send record to Scorpio Server: {response.get('payload', 'Unknown error')}"
+                        f"Failed to send record to Scorpio Server: {response.get('data', 'Unknown error')}"
                     )
                 uploaded_to_server += 1
             msg_server = f"{action_message} batch of {uploaded_to_server} payloads to Scorpio Server"

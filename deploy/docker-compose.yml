@@ -16,6 +16,8 @@ services:
       dockerfile: docker/data_ingest/Dockerfile
     container_name: data-ingest
     restart: unless-stopped
+    environment:
+      SCORPIO_LOG_LEVEL: DEBUG
     depends_on:
       - mqtt
 
@@ -25,6 +27,8 @@ services:
       dockerfile: docker/data_preprocess/Dockerfile
     container_name: data-preprocess
     restart: unless-stopped
+    environment:
+      SCORPIO_LOG_LEVEL: DEBUG
     depends_on: 
       - mqtt
 
@@ -34,6 +38,8 @@ services:
       dockerfile: docker/data_storage/Dockerfile
     container_name: data-storage
     restart: unless-stopped
+    environment:
+      SCORPIO_LOG_LEVEL: DEBUG
     depends_on:
       - mqtt
     volumes:
@@ -45,6 +51,8 @@ services:
       dockerfile: docker/data_clean/Dockerfile
     container_name: data-clean
     restart: unless-stopped
+    environment:
+      SCORPIO_LOG_LEVEL: DEBUG
     depends_on:
       - data_storage
     volumes:
@@ -56,6 +64,8 @@ services:
       dockerfile: docker/data_export/Dockerfile
     container_name: data-export
     restart: unless-stopped
+    environment:
+      SCORPIO_LOG_LEVEL: DEBUG
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:

@@ -18,7 +18,15 @@ class DataExportAPI:
 
     def _parse_response(self, result: dict) -> dict:
         if result["success"]:
-            self.logger.info(result["message"])
+            message = result["message"]
+            if "Current buffer size:" in message:
+                self.logger.info(message)
+            else:
+                self.logger.debug(message)
+        elif result.get("error_code") == "PUB03":
+            self.logger.debug(
+                f"{result['error_code']}: {result.get('message')} - {result.get('details', '')}"
+            )
         else:
             self.logger.error(
                 f"{result['error_code']}: {result.get('message')} - {result.get('details', '')}"

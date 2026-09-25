@@ -3,7 +3,12 @@ import os
 
 load_dotenv()
 
-API_URL = os.getenv("SCORPIO_API_URL", "")
+API_BASE_URL = os.getenv("SCORPIO_API_URL", "").rstrip("/")
+API_URL = (
+    API_BASE_URL
+    if API_BASE_URL.endswith("/packets")
+    else f"{API_BASE_URL}/packets" if API_BASE_URL else ""
+)
 CREDENTIALS = {"bearer_token": os.getenv("SCORPIO_STATION_KEY", "")}
 # MQTT General parameters
 MQTT_HOST = "mqtt"
