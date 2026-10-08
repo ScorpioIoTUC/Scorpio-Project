@@ -1,6 +1,6 @@
 # 1. Instalación de Raspberry Pi OS y acceso local
 
-[← Índice](README.md) | [Siguiente: instalación de Scorpio CLI →](page2.md)
+[← Índice](README.md) | [Siguiente: instalación de Scorpio →](page2.md)
 
 ## Requisitos
 

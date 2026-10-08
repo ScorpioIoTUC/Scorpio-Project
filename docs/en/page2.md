@@ -49,7 +49,7 @@ pip install --upgrade scorpio-cli
 pipx upgrade scorpio-cli
 ```
 
-### 2. Open the UI and sign in
+### 2. Open the interface and connect to the Raspberry Pi
 
 Run:
 
@@ -63,41 +63,107 @@ The terminal will display:
 INFO:root:Server started at http://localhost:8000
 ```
 
-Open [http://localhost:8000](http://localhost:8000) and enter the Raspberry Pi hostname or IP address, SSH username, and password. Both devices must be reachable through the same network or Tailscale.
+Open [http://localhost:8000](http://localhost:8000) and enter the following information:
+
+- **IP Address or hostname:** the Raspberry Pi hostname or IP address, such as `scorpio.local` or `192.168.1.100`.
+- **Username:** the account created in Raspberry Pi Imager, such as `scorpio`.
+- **Password:** the SSH password for that account.
+
+The computer and Raspberry Pi must be reachable through the same local network or Tailscale. Click **Access** to start the SSH connection.
 
 <figure>
 <img src="../imgs/installation/scorpio-ui-ssh-login.png" alt="Scorpio web interface SSH connection form">
-<figcaption>Figure 1. Signing in to the Raspberry Pi over SSH.</figcaption>
+<figcaption>Figure 1. Entering the Raspberry Pi SSH credentials.</figcaption>
 </figure>
 
 ### 3. Start the installation
 
-After connecting, the installation panel appears. Make sure the Raspberry Pi has Internet access and enough free space, then click **Iniciar instalación**.
+After connecting, the main panel displays the **Ready to install** status. Make sure the Raspberry Pi has Internet access and enough free space, then click **Start installation**.
 
 <figure>
 <img src="../imgs/installation/scorpio-ui-install-ready.png" alt="Scorpio panel ready to start the installation">
-<figcaption>Figure 2. Installation panel ready to start.</figcaption>
+<figcaption>Figure 2. Interface ready to start the installation.</figcaption>
 </figure>
 
-The UI downloads the latest Scorpio-Project release, installs the host dependencies, and prepares the Docker infrastructure. The process can take several minutes and produces many logs.
+### 4. Monitor the installation
+
+The interface downloads the latest Scorpio-Project release, installs the low-level dependencies, and configures the Docker infrastructure. This process can take several minutes and produces many events.
 
 <figure>
 <img src="../imgs/installation/scorpio-ui-install-logs.png" alt="Scorpio installation logs displayed in real time">
-<figcaption>Figure 3. Real-time installation progress and logs.</figcaption>
+<figcaption>Figure 3. Installation in progress with real-time events.</figcaption>
 </figure>
 
-Monitor the logs during installation. If a problem occurs, the status changes to **Failed**, and the latest record identifies the cause. When the process finishes successfully, the status changes to **Completed**.
+While the status is **Running**, do not close the interface or power off the Raspberry Pi. Click the `+` button for an event to view its details. If a problem occurs, the status changes to **Failed**, and the latest records help identify the cause. When it finishes successfully, the interface displays **Installation complete** with the **Completed** status.
 
-### 4. Restart and manage services
+### 5. Reboot the Raspberry Pi and manage services
 
-After installation completes, we recommend using the **Reiniciar Raspberry Pi** button. The connection closes temporarily; wait a few minutes and sign in again when the device is available.
+After installation, the **Service status** card displays the infrastructure status and enables its controls.
 
-The UI displays the infrastructure status, service logs, and **Start** and **Stop** controls. Use **Update page** to query the current status and reconnect the logs when necessary.
+<figure>
+<img src="../imgs/installation/scorpio-ui-install-completed.png" alt="Scorpio installation completed with services stopped">
+<figcaption>Figure 4. Installation completed and infrastructure controls available.</figcaption>
+</figure>
+
+Click **Reboot Raspberry Pi** to apply all system changes. The SSH connection closes temporarily. Wait a few minutes, reopen the interface, and enter the access credentials again.
+
+The service controls work as follows:
+
+- **Start:** starts the Scorpio Docker services.
+- **Stop:** stops the services without deleting persistent data.
+- **Refresh page:** requests the current status and reconnects the log display.
+- **Restart services:** click **Stop**, wait for the status to change to **Stopped**, and then click **Start**.
+- **Reboot Raspberry Pi:** restarts the entire operating system; it is not the same as restarting only the services.
+
+When the infrastructure is active, its status changes to **Running**, and **Service logs** displays container events. You can filter the logs by service and time range.
 
 <figure>
 <img src="../imgs/installation/scorpio-ui-services.png" alt="Scorpio infrastructure service and log panel">
-<figcaption>Figure 4. Infrastructure controls and service logs.</figcaption>
+<figcaption>Figure 5. Running services and infrastructure logs.</figcaption>
 </figure>
+
+### 6. Configure the Station Key and API
+
+After completing the installation, open **Settings** from the top navigation bar. Under **Station settings**, configure the connection used to publish Scorpio packets.
+
+<figure>
+<img src="../imgs/installation/scorpio-ui-station-settings.png" alt="Scorpio Station Key and API URL settings form">
+<figcaption>Figure 6. Station Key and API base URL configuration.</figcaption>
+</figure>
+
+Complete the fields using the following format. For the production environment, use the API base URL shown below:
+
+```text
+Station Key:
+a121183c-1f93-4675-8a6c-58e075022db4.tmQ0fJwNGsMZYPJpoBTYZq_JE9X1LPqQotmquA7vAvY
+
+Scorpio API URL:
+https://scorpio.cpsrtc.cl/api/
+```
+
+> **Important:** you must have an active Station Key to complete this configuration. The key is provided when you create the station on the [Scorpio platform](https://scorpio.cpsrtc.cl/). Copy and securely retain the key provided during that process; the value above is included only as a format example and does not provide access to any station. Never publish an active Station Key in documentation, repositories, screenshots, or messages.
+
+In **Scorpio API URL**, enter the current production API address: `https://scorpio.cpsrtc.cl/api/`. Click **Save** to store the configuration. The interface updates the Raspberry Pi `.env` file and automatically restarts the `data-export` service.
+
+If `Could not load Scorpio API settings` appears before installing Scorpio, complete the installation first and reopen **Settings**.
+
+### 7. Check and install updates
+
+Open **Updates** from the top navigation bar to check the installed Scorpio CLI and Scorpio-Project versions. If everything is current, the interface displays **Scorpio CLI is already up to date**.
+
+<figure>
+<img src="../imgs/installation/scorpio-ui-updates-current.png" alt="Scorpio updates page showing that the system is current">
+<figcaption>Figure 7. Scorpio CLI and Scorpio-Project with no pending updates.</figcaption>
+</figure>
+
+Click **Check again** to repeat the check. If a newer version is available, the **Update** button appears.
+
+<figure>
+<img src="../imgs/installation/scorpio-ui-update-available.png" alt="Scorpio interface showing an available update">
+<figcaption>Figure 8. Example of an available update.</figcaption>
+</figure>
+
+Click **Update** and keep the window open until the process finishes. Then return to the main panel and confirm that the infrastructure remains **Running**.
 
 ## Option B: install from the terminal
 

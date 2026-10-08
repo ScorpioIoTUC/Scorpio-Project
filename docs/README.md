@@ -8,7 +8,7 @@ This documentation explains how to prepare a Raspberry Pi, install Scorpio, and 
 Both versions follow the same structure:
 
 1. Raspberry Pi OS installation and local access
-2. Scorpio CLI installation
+2. Scorpio installation through the web interface or terminal
 3. Remote access with Tailscale
 4. Scorpio Developers — Part 1 *(coming soon)*
 5. Scorpio Developers — Part 2 *(coming soon)*

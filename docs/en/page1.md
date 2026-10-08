@@ -1,6 +1,6 @@
 # 1. Raspberry Pi OS installation and local access
 
-[← Contents](README.md) | [Next: Scorpio CLI installation →](page2.md)
+[← Contents](README.md) | [Next: installing Scorpio →](page2.md)
 
 ## Requirements
 
@@ -176,4 +176,3 @@ ssh scorpio@192.168.1.100
 ```
 
 On the first connection, SSH asks you to confirm the device identity. Verify the fingerprint when available, answer `yes`, and enter the configured password.
-

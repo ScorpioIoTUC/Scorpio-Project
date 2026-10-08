@@ -3,7 +3,7 @@
 ## Installation
 
 1. [Raspberry Pi OS installation and local access](page1.md)
-2. [Scorpio CLI installation](page2.md)
+2. [Installing Scorpio through the web interface or terminal](page2.md)
 3. [Remote access with Tailscale](page3.md)
 
 ## Scorpio Developers

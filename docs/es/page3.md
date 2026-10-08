@@ -1,6 +1,6 @@
 # 3. Configuración de acceso remoto con Tailscale
 
-[← Anterior: Scorpio CLI](page2.md) | [Índice](README.md) | [Siguiente: Scorpio Developers →](page4.md)
+[← Anterior: instalación de Scorpio](page2.md) | [Índice](README.md) | [Siguiente: Scorpio Developers →](page4.md)
 
 Tailscale crea una red privada entre la Raspberry Pi y tus dispositivos. De esta forma puedes conectarte por SSH desde fuera de la red local sin abrir puertos en el router.
 
